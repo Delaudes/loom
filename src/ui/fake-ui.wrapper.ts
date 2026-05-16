@@ -4,7 +4,7 @@ export class FakeUiWrapper implements UiPort {
     path?: string
     params: Record<string, string> = {};
     shareText?: string;
-    shareUrl?: string;
+    sharePath?: string;
 
     navigate(path: string): void {
         this.path = path;
@@ -14,8 +14,8 @@ export class FakeUiWrapper implements UiPort {
         return this.params[name] ?? '';
     }
 
-    share(text: string, url: string): void {
+    share(text: string, path: string): void {
         this.shareText = text;
-        this.shareUrl = url;
+        this.sharePath = path;
     }
 }

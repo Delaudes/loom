@@ -1,4 +1,4 @@
-import { GameDomainModel } from "../models/game.domain.model";
+import { NewGameDomainModel } from "../models/game.domain.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
 
@@ -12,25 +12,24 @@ export class StartGameUseCase {
             this.presentStartGame(game);
         } catch {
             this.presentErrorStartGame()
-        } finally {
-            this.stopLoadingStartGame();
         }
+        this.stopLoadingStartGame();
     }
 
-    startLoadingStartGame(): void {
-        this.gameView.update({ isLoading: true });
+    private startLoadingStartGame(): void {
+        this.gameView.update({ isLoadingCreate: true });
     }
 
-    stopLoadingStartGame(): void {
-        this.gameView.update({ isLoading: false });
+    private stopLoadingStartGame(): void {
+        this.gameView.update({ isLoadingCreate: false });
     }
 
-    presentErrorStartGame(): void {
-        this.gameView.update({ isError: true });
+    private presentErrorStartGame(): void {
+        this.gameView.update({ isErrorCreate: true });
     }
 
-    presentStartGame(game: GameDomainModel): void {
-        this.gameView.update({ isError: false });
-        this.gameView.navigateToGame(game.id, game.playerId);
+    private presentStartGame(newGame: NewGameDomainModel): void {
+        this.gameView.update({ isErrorCreate: false });
+        this.gameView.navigateToGame(newGame.id, newGame.playerId);
     }
 }

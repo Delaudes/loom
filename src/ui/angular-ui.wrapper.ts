@@ -14,10 +14,10 @@ export class AngularUiWrapper implements UiPort {
         return this.activatedRoute.firstChild?.snapshot.paramMap.get(name) ?? '';
     }
 
-    share(text: string, url: string): void {
+    share(text: string, path: string): void {
         navigator.share({
             text,
-            url,
+            url: location.origin + '/' + path,
         });
     }
 }

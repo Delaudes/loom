@@ -1,5 +1,6 @@
-import { GameDomainModel } from "../models/game.domain.model";
+import { GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
 
 export interface GamePort {
-    createGame(): Promise<GameDomainModel>;
+    createGame(): Promise<NewGameDomainModel>;
+    fetchGame(gameId: string, playerId: string): Promise<GameDomainModel>;
 }
