@@ -42,7 +42,6 @@ export class FetchGameUseCase {
                 canPlay: owner === OwnerViewEnum.None && !game.hasPlayedInCurrentRound(cell.x, cell.y)
             }
         }))
-        console.log(cells)
         this.gameView.update({ isErrorFetch: false, status, cells });
     }
 
@@ -62,6 +61,15 @@ export class FetchGameUseCase {
         }
         if (nextAction?.isSecondPredictAction()) {
             return StatusViewEnum.SecondPredict;
+        }
+        if (game.isFinished()) {
+            if (game.isPlayerWin()) {
+                return StatusViewEnum.Win
+            }
+            if (game.isOpponentWin()) {
+                return StatusViewEnum.Lost
+            }
+            return StatusViewEnum.NoWinner
         }
         return StatusViewEnum.WaitingOpponent;
     }

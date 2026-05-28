@@ -43,8 +43,30 @@ export class GameDomainModel {
         return 0;
     }
 
+    isFinished(): boolean {
+        return this.round === 0
+    }
+
+    isPlayerWin(): boolean {
+        const ownedPositions = this.ownedPositions
+        const largestPlayerTerritory = ownedPositions.largestPlayerTerritory
+        const largestOpponentTerritory = ownedPositions.largestOpponentTerritory
+        return largestPlayerTerritory.length > largestOpponentTerritory.length
+    }
+
+    isOpponentWin(): boolean {
+        const ownedPositions = this.ownedPositions
+        const largestPlayerTerritory = ownedPositions.largestPlayerTerritory
+        const largestOpponentTerritory = ownedPositions.largestOpponentTerritory
+        return largestOpponentTerritory.length > largestPlayerTerritory.length
+    }
+
     get nextPlayerAction(): NextActionDomainModel | undefined {
-        const playerRoundActions = this.getPlayerRoundActions(this.round);
+        const round = this.round
+        if (round === 0) {
+            return undefined
+        }
+        const playerRoundActions = this.getPlayerRoundActions(round);
         if (playerRoundActions.length === 0) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Place, 1);
         }
@@ -164,6 +186,8 @@ export class NextActionDomainModel {
 }
 
 export class OwnedPositionsDomainModel {
+    private readonly height = 8
+    private readonly width = 8
     constructor(
         public readonly playerOwnedPositions: PositionDomainModel[],
         public readonly opponentOwnedPositions: PositionDomainModel[]
@@ -183,6 +207,100 @@ export class OwnedPositionsDomainModel {
 
     addOpponentOwnedPositions(position: PositionDomainModel): void {
         this.opponentOwnedPositions.push(position);
+    }
+
+    get largestPlayerTerritory(): PositionDomainModel[] {
+        const positions = this.playerOwnedPositions;
+        const visited = new Array(positions.length).fill(false);
+
+        const isAdjacent = (a: PositionDomainModel, b: PositionDomainModel): boolean => {
+            const dx = Math.min(
+                Math.abs(a.x - b.x),
+                this.width - Math.abs(a.x - b.x)
+            );
+
+            const dy = Math.min(
+                Math.abs(a.y - b.y),
+                this.height - Math.abs(a.y - b.y)
+            );
+
+            return (dx === 1 && dy === 0) || (dy === 1 && dx === 0);
+        };
+
+        const dfs = (index: number, group: PositionDomainModel[]) => {
+            visited[index] = true;
+            const current = positions[index];
+            group.push(current);
+
+            for (let i = 0; i < positions.length; i++) {
+                if (visited[i]) continue;
+                if (isAdjacent(current, positions[i])) {
+                    dfs(i, group);
+                }
+            }
+        };
+
+        let largest: PositionDomainModel[] = [];
+
+        for (let i = 0; i < positions.length; i++) {
+            if (visited[i]) continue;
+
+            const group: PositionDomainModel[] = [];
+            dfs(i, group);
+
+            if (group.length > largest.length) {
+                largest = group;
+            }
+        }
+
+        return largest;
+    }
+
+    get largestOpponentTerritory(): PositionDomainModel[] {
+        const positions = this.opponentOwnedPositions;
+        const visited = new Array(positions.length).fill(false);
+
+        const isAdjacent = (a: PositionDomainModel, b: PositionDomainModel): boolean => {
+            const dx = Math.min(
+                Math.abs(a.x - b.x),
+                this.width - Math.abs(a.x - b.x)
+            );
+
+            const dy = Math.min(
+                Math.abs(a.y - b.y),
+                this.height - Math.abs(a.y - b.y)
+            );
+
+            return (dx === 1 && dy === 0) || (dy === 1 && dx === 0);
+        };
+
+        const dfs = (index: number, group: PositionDomainModel[]) => {
+            visited[index] = true;
+            const current = positions[index];
+            group.push(current);
+
+            for (let i = 0; i < positions.length; i++) {
+                if (visited[i]) continue;
+                if (isAdjacent(current, positions[i])) {
+                    dfs(i, group);
+                }
+            }
+        };
+
+        let largest: PositionDomainModel[] = [];
+
+        for (let i = 0; i < positions.length; i++) {
+            if (visited[i]) continue;
+
+            const group: PositionDomainModel[] = [];
+            dfs(i, group);
+
+            if (group.length > largest.length) {
+                largest = group;
+            }
+        }
+
+        return largest;
     }
 }
 

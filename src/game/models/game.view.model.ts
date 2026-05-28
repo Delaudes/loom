@@ -24,7 +24,8 @@ export enum StatusViewEnum {
     FirstPredict = "Prédiction n°1",
     SecondPredict = "Prédiction n°2",
     Lost = "Partie perdue",
-    Win = "Partie gagnée"
+    Win = "Partie gagnée",
+    NoWinner = "Aucun vainqueur : égalité"
 }
 
 export enum OwnerViewEnum {
