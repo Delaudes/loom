@@ -1,6 +1,41 @@
-<h1>LOOM</h1>
-<p>Un jeu de stratégie 1 contre 1</p>
-<p>Placez et prédisez à chaque tour</p>
-<p>Construisez votre territoire</p>
-<p>La plus grande zone l'emporte</p>
-<app-start-game></app-start-game>
+<main class="min-h-screen bg-zinc-950 flex flex-col items-center justify-center px-8 relative overflow-hidden">
+
+  <div class="absolute inset-0 opacity-[0.04]"
+    style="background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px); background-size: 48px 48px;">
+  </div>
+
+  <div class="relative z-10 flex flex-col items-center text-center">
+
+    <h1 class="text-6xl sm:text-8xl font-thin tracking-[0.4em] pl-[0.4em] text-white uppercase mb-5">
+      Loom
+    </h1>
+
+    <div class="w-8 h-px bg-zinc-600 mb-6"></div>
+
+    <p class="text-zinc-400 text-[0.65rem] tracking-[0.2em] uppercase mb-14 whitespace-nowrap">
+      Stratégie · 1 contre 1
+    </p>
+
+    <div class="flex flex-col gap-6 mb-14 w-full max-w-xs">
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-zinc-400 shrink-0"
+          style="font-size:1.1rem; font-variation-settings:'wght' 300">grid_4x4</span>
+        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">Placez et prédisez à chaque tour</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-zinc-400 shrink-0"
+          style="font-size:1.1rem; font-variation-settings:'wght' 300">select_all</span>
+        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">Construisez votre territoire</span>
+      </div>
+      <div class="flex items-center gap-4">
+        <span class="material-symbols-outlined text-zinc-400 shrink-0"
+          style="font-size:1.1rem; font-variation-settings:'wght' 300">military_tech</span>
+        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">La plus grande zone l'emporte</span>
+      </div>
+    </div>
+
+    <app-start-game></app-start-game>
+
+  </div>
+
+</main>

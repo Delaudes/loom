@@ -1,7 +1,9 @@
-@for (row of gameView.gameViewModel.get().cells; track $index) {
-  <div class="flex">
-    @for (cell of row; track $index) {
-      <app-cell [cell]="cell"></app-cell>
-    }
-  </div>
-}
+<div class="inline-flex flex-col border-t border-l border-zinc-500">
+  @for (row of gameView.gameViewModel.get().cells; track $index) {
+    <div class="flex">
+      @for (cell of row; track $index) {
+        <app-cell [cell]="cell"></app-cell>
+      }
+    </div>
+  }
+</div>

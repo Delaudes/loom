@@ -1,1 +1,15 @@
-<button (click)="startGameUseCase.execute()">Lancer une partie</button>
+@if (gameView.gameViewModel.get().isLoadingCreate) {
+  <div class="flex items-center justify-center h-11.5">
+    <div class="w-4 h-4 border border-zinc-600 border-t-zinc-300 rounded-full animate-spin"></div>
+  </div>
+} @else {
+  <button
+    (click)="startGameUseCase.execute()"
+    class="px-12 py-3.5 border border-zinc-700 text-zinc-400 text-xs tracking-[0.3em] uppercase hover:border-zinc-400 hover:text-white transition-all duration-500 cursor-pointer">
+    Nouvelle partie
+  </button>
+}
+
+@if (gameView.gameViewModel.get().isErrorCreate) {
+  <p class="mt-5 text-[0.65rem] tracking-[0.15em] text-red-400/70 uppercase text-center">Une erreur est survenue</p>
+}
