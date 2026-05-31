@@ -7,7 +7,7 @@ export class NewGameDomainModel {
 }
 
 export class GameDomainModel {
-    private readonly maxRound = 10;
+    public readonly maxRound = 10;
     private readonly maxActionPerRound = 5;
     constructor(
         public readonly playerActions: ActionDomainModel[],
@@ -34,7 +34,7 @@ export class GameDomainModel {
         return this.hasPlayerRoundComplete(round) && this.hasOpponentRoundComplete(round);
     }
 
-    private get round(): number {
+    get round(): number {
         for (let round = 1; round <= this.maxRound; round++) {
             if (!this.hasRoundComplete(round)) {
                 return round;

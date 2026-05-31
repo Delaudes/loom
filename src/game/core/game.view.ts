@@ -17,7 +17,8 @@ export class GameView {
                     owner: OwnerViewEnum.None,
                     canPlay: true
                 }))
-            )
+            ),
+            round: '1/10'
         });
     }
 

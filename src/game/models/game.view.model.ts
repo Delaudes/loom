@@ -5,9 +5,8 @@ export type GameViewModel = {
     isErrorFetch: boolean;
     status?: StatusViewEnum;
     cells: CellViewModel[][];
+    round: string;
 }
-
-
 
 export type CellViewModel = {
     x: number;
@@ -18,14 +17,14 @@ export type CellViewModel = {
 
 export enum StatusViewEnum {
     WaitingOpponent = "En attente de l'adversaire",
-    FirstPlace = "Placement n°1",
-    SecondPlace = "Placement n°2",
-    ThirdPlace = "Placement n°3",
-    FirstPredict = "Prédiction n°1",
-    SecondPredict = "Prédiction n°2",
-    Lost = "Partie perdue",
-    Win = "Partie gagnée",
-    NoWinner = "Aucun vainqueur : égalité"
+    FirstPlace = "Posez votre 1er pion",
+    SecondPlace = "Posez votre 2ème pion",
+    ThirdPlace = "Posez votre 3ème pion",
+    FirstPredict = "Prédisez la 1ère position adverse",
+    SecondPredict = "Prédisez la 2ème position adverse",
+    Win = "Victoire",
+    Lost = "Défaite",
+    NoWinner = "Égalité"
 }
 
 export enum OwnerViewEnum {

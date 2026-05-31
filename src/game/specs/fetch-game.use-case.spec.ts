@@ -136,6 +136,7 @@ describe('FetchGameUseCase', () => {
         simulateFirstPlayerRound();
         simulateFirstOpponentRound();
         updateFirstRound(expectedGame);
+
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     })
@@ -195,6 +196,7 @@ describe('FetchGameUseCase', () => {
         expectedGame.cells[0][2].canPlay = false;
         expectedGame.cells[1][0].canPlay = false;
         expectedGame.cells[2][0].canPlay = false;
+        expectedGame.round = '2/10';
     }
 
     function simulatePlayerWinGame() {
@@ -243,6 +245,7 @@ describe('FetchGameUseCase', () => {
         expectedGame.cells[7][7].canPlay = false
         expectedGame.cells[1][0].canPlay = false
         expectedGame.cells[2][0].canPlay = false
+        expectedGame.round = '0/10';
     }
 
     function simulatePlayerLoseGame() {
@@ -292,6 +295,7 @@ describe('FetchGameUseCase', () => {
         expectedGame.cells[7][7].canPlay = false
         expectedGame.cells[1][0].canPlay = false
         expectedGame.cells[2][0].canPlay = false
+        expectedGame.round = "0/10";
     }
 
     function simulateNoWinnerGame() {
@@ -340,6 +344,7 @@ describe('FetchGameUseCase', () => {
         expectedGame.cells[7][7].canPlay = false
         expectedGame.cells[6][7].canPlay = false
         expectedGame.cells[7][6].canPlay = false
+        expectedGame.round = '0/10';
     }
 })
 
@@ -356,6 +361,7 @@ const gameViewModelInit = (): GameViewModel => {
                 owner: OwnerViewEnum.None,
                 canPlay: true,
             }))
-        )
+        ),
+        round: '1/10'
     };
 }

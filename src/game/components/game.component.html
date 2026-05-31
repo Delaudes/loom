@@ -5,7 +5,18 @@
   </div>
 
   <header class="relative z-10 flex items-center justify-between px-6 pt-8 pb-6">
-    <h1 class="text-2xl sm:text-3xl font-thin tracking-[0.4em] pl-[0.4em] text-white uppercase">Loom</h1>
+    <h1 class="text-2xl sm:text-3xl font-thin text-white uppercase flex items-center pl-[0.4em]">
+      <span class="tracking-[0.4em]">L</span>
+      <svg viewBox="0 0 24 24" class="w-[0.65em] h-[0.65em] ml-[0.15em] mr-[0.4em] shrink-0">
+        <circle cx="12" cy="12" r="9.5" fill="white"/>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="1.5"/>
+      </svg>
+      <svg viewBox="0 0 24 24" class="w-[0.65em] h-[0.65em] mr-[0.4em] shrink-0">
+        <circle cx="12" cy="12" r="9.5" fill="#f59e0b"/>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>
+      </svg>
+      <span class="tracking-[0.4em]">M</span>
+    </h1>
     <div class="flex items-center gap-2">
       <app-back-home></app-back-home>
       <app-share-game></app-share-game>
@@ -28,7 +39,15 @@
         <p class="text-[0.65rem] tracking-[0.15em] text-red-400/70 uppercase text-center">Une erreur est survenue lors du chargement de la partie</p>
       </div>
     } @else {
-      <app-game-board></app-game-board>
+      <div class="flex flex-col items-center gap-6">
+        <div class="flex flex-col items-center gap-2">
+          <p class="text-[0.65rem] tracking-[0.2em] text-zinc-600 uppercase">Manche {{ gameView.gameViewModel.get().round }}</p>
+          @if (gameView.gameViewModel.get().status; as status) {
+            <p class="text-xs tracking-[0.25em] text-zinc-400 uppercase">{{ status }}</p>
+          }
+        </div>
+        <app-game-board></app-game-board>
+      </div>
     }
   </main>
 

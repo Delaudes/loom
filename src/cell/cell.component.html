@@ -1,3 +1,25 @@
-<div class="w-10 h-10 sm:w-11 sm:h-11 bg-zinc-900 border-r border-b border-zinc-500 flex items-center justify-center text-zinc-600 text-[0.5rem] tracking-tight hover:bg-zinc-800 hover:text-zinc-400 transition-all duration-200 cursor-pointer">
-  {{ cell().x }}-{{ cell().y }}
+<div
+  class="w-10 h-10 sm:w-11 sm:h-11 bg-zinc-900 border-r border-b border-zinc-500 flex items-center justify-center transition-colors duration-200 group hover:bg-zinc-800"
+  [class.cursor-pointer]="cell().canPlay"
+  [class.cursor-default]="!cell().canPlay">
+
+  @switch (cell().owner) {
+    @case (OwnerViewEnum.Player) {
+      <svg viewBox="0 0 24 24" class="w-6 h-6 drop-shadow-sm">
+        <circle cx="12" cy="12" r="9.5" fill="white"/>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="1.5"/>
+      </svg>
+    }
+    @case (OwnerViewEnum.Opponent) {
+      <svg viewBox="0 0 24 24" class="w-6 h-6 drop-shadow-sm">
+        <circle cx="12" cy="12" r="9.5" fill="#f59e0b"/>
+        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>
+      </svg>
+    }
+    @default {
+      @if (cell().canPlay) {
+        <div class="w-1.5 h-1.5 rounded-full bg-zinc-700 group-hover:bg-zinc-500 transition-colors duration-200"></div>
+      }
+    }
+  }
 </div>
