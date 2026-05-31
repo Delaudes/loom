@@ -48,17 +48,11 @@ export class GameDomainModel {
     }
 
     isPlayerWin(): boolean {
-        const ownedPositions = this.ownedPositions
-        const largestPlayerTerritory = ownedPositions.largestPlayerTerritory
-        const largestOpponentTerritory = ownedPositions.largestOpponentTerritory
-        return largestPlayerTerritory.length > largestOpponentTerritory.length
+        return this.ownedPositions.isPlayerWin();
     }
 
     isOpponentWin(): boolean {
-        const ownedPositions = this.ownedPositions
-        const largestPlayerTerritory = ownedPositions.largestPlayerTerritory
-        const largestOpponentTerritory = ownedPositions.largestOpponentTerritory
-        return largestOpponentTerritory.length > largestPlayerTerritory.length
+        return this.ownedPositions.isOpponentWin();
     }
 
     get nextPlayerAction(): NextActionDomainModel | undefined {
@@ -70,18 +64,18 @@ export class GameDomainModel {
         if (playerRoundActions.length === 0) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Place, 1);
         }
-        const playerPlaceRoundActions = playerRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Place));
-        if (playerPlaceRoundActions.length === 1) {
+        const playerPlacements = playerRoundActions.filter(a => a.isPlacement());
+        if (playerPlacements.length === 1) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Place, 2);
         }
-        if (playerPlaceRoundActions.length === 2) {
+        if (playerPlacements.length === 2) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Place, 3);
         }
-        const playerPredictRoundActions = playerRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Predict));
-        if (playerPredictRoundActions.length === 0) {
+        const playerPredictions = playerRoundActions.filter(a => a.isPrediction());
+        if (playerPredictions.length === 0) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 1);
         }
-        if (playerPredictRoundActions.length === 1) {
+        if (playerPredictions.length === 1) {
             return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 2);
         }
         return undefined;
@@ -90,43 +84,35 @@ export class GameDomainModel {
     get ownedPositions(): OwnedPositionsDomainModel {
         const ownedPositions = new OwnedPositionsDomainModel([], []);
         for (let round = 1; round <= this.maxRound; round++) {
-            const playerRoundActions = this.getPlayerRoundActions(round);
-            const opponentRoundActions = this.getOpponentRoundActions(round);
             if (!this.hasRoundComplete(round)) {
                 return ownedPositions;
             }
-            const playerPlaceRoundActions = playerRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Place));
-            const playerPredictRoundActions = playerRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Predict));
-            const opponentPlaceRoundActions = opponentRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Place));
-            const opponentPredictRoundActions = opponentRoundActions.filter(action => action.hasType(ActionTypeDomainEnum.Predict));
-            playerPlaceRoundActions.forEach(playerPlaceAction => {
-                if (opponentPredictRoundActions.some(opponentPredictAction => opponentPredictAction.hasPosition(playerPlaceAction.position))) {
-                    ownedPositions.addOpponentOwnedPositions(playerPlaceAction.position);
-                    return;
+            const playerRoundActions = this.getPlayerRoundActions(round);
+            const opponentRoundActions = this.getOpponentRoundActions(round);
+            const playerPlacements = playerRoundActions.filter(a => a.isPlacement());
+            const playerPredictions = playerRoundActions.filter(a => a.isPrediction());
+            const opponentPlacements = opponentRoundActions.filter(a => a.isPlacement());
+            const opponentPredictions = opponentRoundActions.filter(a => a.isPrediction());
+            playerPlacements.forEach(placement => {
+                if (opponentPredictions.some(p => p.hasPosition(placement.position))) {
+                    ownedPositions.addOpponentOwnedPositions(placement.position);
+                } else if (!opponentPlacements.some(p => p.hasPosition(placement.position))) {
+                    ownedPositions.addPlayerOwnedPositions(placement.position);
                 }
-                if (!opponentPlaceRoundActions.some(opponentPlaceAction => opponentPlaceAction.hasPosition(playerPlaceAction.position))) {
-                    ownedPositions.addPlayerOwnedPositions(playerPlaceAction.position);
+            });
+            opponentPlacements.forEach(placement => {
+                if (playerPredictions.some(p => p.hasPosition(placement.position))) {
+                    ownedPositions.addPlayerOwnedPositions(placement.position);
+                } else if (!playerPlacements.some(p => p.hasPosition(placement.position))) {
+                    ownedPositions.addOpponentOwnedPositions(placement.position);
                 }
-            })
-            opponentPlaceRoundActions.forEach(opponentPlaceAction => {
-                if (playerPredictRoundActions.some(playerPredictAction => playerPredictAction.hasPosition(opponentPlaceAction.position))) {
-                    ownedPositions.addPlayerOwnedPositions(opponentPlaceAction.position);
-                    return;
-                }
-                if (!playerPlaceRoundActions.some(playerPlaceAction => playerPlaceAction.hasPosition(opponentPlaceAction.position))) {
-                    ownedPositions.addOpponentOwnedPositions(opponentPlaceAction.position);
-                }
-            })
+            });
         }
         return ownedPositions;
     }
 
     hasPlayedInCurrentRound(x: number, y: number): boolean {
-        const playerRoundActions = this.getPlayerRoundActions(this.round);
-        if (playerRoundActions.some(action => action.hasPosition(new PositionDomainModel(x, y)))) {
-            return true
-        }
-        return false
+        return this.getPlayerRoundActions(this.round).some(action => action.isAt(x, y));
     }
 }
 
@@ -141,12 +127,20 @@ export class ActionDomainModel {
         return this.round === round;
     }
 
-    hasType(type: ActionTypeDomainEnum): boolean {
-        return this.type === type;
+    isPlacement(): boolean {
+        return this.type === ActionTypeDomainEnum.Place;
+    }
+
+    isPrediction(): boolean {
+        return this.type === ActionTypeDomainEnum.Predict;
     }
 
     hasPosition(position: PositionDomainModel): boolean {
         return this.position.hasX(position.x) && this.position.hasY(position.y);
+    }
+
+    isAt(x: number, y: number): boolean {
+        return this.position.hasX(x) && this.position.hasY(y);
     }
 }
 
@@ -193,12 +187,18 @@ export class OwnedPositionsDomainModel {
         public readonly opponentOwnedPositions: PositionDomainModel[]
     ) { }
 
-    hasPlayerOwnedPosition(x: number, y: number): boolean {
-        return this.playerOwnedPositions.some(position => position.hasX(x) && position.hasY(y));
+    isPlayerWin(): boolean {
+        return this.largestPlayerTerritory.length > this.largestOpponentTerritory.length;
     }
 
-    hasOpponentOwnedPosition(x: number, y: number): boolean {
-        return this.opponentOwnedPositions.some(position => position.hasX(x) && position.hasY(y));
+    isOpponentWin(): boolean {
+        return this.largestOpponentTerritory.length > this.largestPlayerTerritory.length;
+    }
+
+    ownerAt(x: number, y: number): OwnerDomainEnum {
+        if (this.playerOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Player;
+        if (this.opponentOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Opponent;
+        return OwnerDomainEnum.None;
     }
 
     addPlayerOwnedPositions(position: PositionDomainModel): void {
@@ -210,97 +210,43 @@ export class OwnedPositionsDomainModel {
     }
 
     get largestPlayerTerritory(): PositionDomainModel[] {
-        const positions = this.playerOwnedPositions;
-        const visited = new Array(positions.length).fill(false);
-
-        const isAdjacent = (a: PositionDomainModel, b: PositionDomainModel): boolean => {
-            const dx = Math.min(
-                Math.abs(a.x - b.x),
-                this.width - Math.abs(a.x - b.x)
-            );
-
-            const dy = Math.min(
-                Math.abs(a.y - b.y),
-                this.height - Math.abs(a.y - b.y)
-            );
-
-            return (dx === 1 && dy === 0) || (dy === 1 && dx === 0);
-        };
-
-        const dfs = (index: number, group: PositionDomainModel[]) => {
-            visited[index] = true;
-            const current = positions[index];
-            group.push(current);
-
-            for (let i = 0; i < positions.length; i++) {
-                if (visited[i]) continue;
-                if (isAdjacent(current, positions[i])) {
-                    dfs(i, group);
-                }
-            }
-        };
-
-        let largest: PositionDomainModel[] = [];
-
-        for (let i = 0; i < positions.length; i++) {
-            if (visited[i]) continue;
-
-            const group: PositionDomainModel[] = [];
-            dfs(i, group);
-
-            if (group.length > largest.length) {
-                largest = group;
-            }
-        }
-
-        return largest;
+        return this.largestTerritory(this.playerOwnedPositions);
     }
 
     get largestOpponentTerritory(): PositionDomainModel[] {
-        const positions = this.opponentOwnedPositions;
+        return this.largestTerritory(this.opponentOwnedPositions);
+    }
+
+    private largestTerritory(positions: PositionDomainModel[]): PositionDomainModel[] {
         const visited = new Array(positions.length).fill(false);
 
-        const isAdjacent = (a: PositionDomainModel, b: PositionDomainModel): boolean => {
-            const dx = Math.min(
-                Math.abs(a.x - b.x),
-                this.width - Math.abs(a.x - b.x)
-            );
-
-            const dy = Math.min(
-                Math.abs(a.y - b.y),
-                this.height - Math.abs(a.y - b.y)
-            );
-
-            return (dx === 1 && dy === 0) || (dy === 1 && dx === 0);
-        };
-
-        const dfs = (index: number, group: PositionDomainModel[]) => {
+        const collect = (index: number, territory: PositionDomainModel[]) => {
             visited[index] = true;
             const current = positions[index];
-            group.push(current);
-
+            territory.push(current);
             for (let i = 0; i < positions.length; i++) {
-                if (visited[i]) continue;
-                if (isAdjacent(current, positions[i])) {
-                    dfs(i, group);
+                if (!visited[i] && this.isAdjacent(current, positions[i])) {
+                    collect(i, territory);
                 }
             }
         };
 
         let largest: PositionDomainModel[] = [];
-
         for (let i = 0; i < positions.length; i++) {
             if (visited[i]) continue;
-
-            const group: PositionDomainModel[] = [];
-            dfs(i, group);
-
-            if (group.length > largest.length) {
-                largest = group;
+            const territory: PositionDomainModel[] = [];
+            collect(i, territory);
+            if (territory.length > largest.length) {
+                largest = territory;
             }
         }
-
         return largest;
+    }
+
+    private isAdjacent(a: PositionDomainModel, b: PositionDomainModel): boolean {
+        const dx = Math.min(Math.abs(a.x - b.x), this.width - Math.abs(a.x - b.x));
+        const dy = Math.min(Math.abs(a.y - b.y), this.height - Math.abs(a.y - b.y));
+        return (dx === 1 && dy === 0) || (dy === 1 && dx === 0);
     }
 }
 
@@ -317,6 +263,12 @@ export class PositionDomainModel {
     hasY(y: number): boolean {
         return this.y === y;
     }
+}
+
+export enum OwnerDomainEnum {
+    Player = 'player',
+    Opponent = 'opponent',
+    None = 'none'
 }
 
 export enum ActionTypeDomainEnum {

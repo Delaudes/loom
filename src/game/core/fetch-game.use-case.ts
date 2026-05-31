@@ -1,4 +1,4 @@
-import { GameDomainModel, OwnedPositionsDomainModel } from "../models/game.domain.model";
+import { GameDomainModel, OwnedPositionsDomainModel, OwnerDomainEnum } from "../models/game.domain.model";
 import { CellViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
@@ -75,12 +75,11 @@ export class FetchGameUseCase {
     }
 
     private getOwner(cell: CellViewModel, ownedPositions: OwnedPositionsDomainModel): OwnerViewEnum {
-        if (ownedPositions.hasPlayerOwnedPosition(cell.x, cell.y)) {
-            return OwnerViewEnum.Player;
-        }
-        if (ownedPositions.hasOpponentOwnedPosition(cell.x, cell.y)) {
-            return OwnerViewEnum.Opponent;
-        }
-        return OwnerViewEnum.None;
+        const ownerMap: Record<OwnerDomainEnum, OwnerViewEnum> = {
+            [OwnerDomainEnum.Player]: OwnerViewEnum.Player,
+            [OwnerDomainEnum.Opponent]: OwnerViewEnum.Opponent,
+            [OwnerDomainEnum.None]: OwnerViewEnum.None,
+        };
+        return ownerMap[ownedPositions.ownerAt(cell.x, cell.y)];
     }
 }
