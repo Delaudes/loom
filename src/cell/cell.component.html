@@ -22,8 +22,13 @@
       </svg>
     }
     @default {
-      @if (cell().canPlay) {
-        <div class="w-1.5 h-1.5 rounded-full bg-zinc-700 group-hover:bg-zinc-500 transition-colors duration-200"></div>
+      @if (cell().isPlayedInCurrentRound) {
+        <svg viewBox="0 0 24 24" class="w-6 h-6 opacity-25">
+          <circle cx="12" cy="12" r="9" fill="#e8e8e8"/>
+          <circle cx="9" cy="9" r="4" fill="rgba(255,255,255,0.85)"/>
+          <circle cx="13" cy="14" r="5" fill="rgba(180,180,180,0.2)"/>
+          <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
+        </svg>
       }
     }
   }

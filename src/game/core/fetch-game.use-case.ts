@@ -39,7 +39,8 @@ export class FetchGameUseCase {
             return {
                 ...cell,
                 owner,
-                canPlay: owner === OwnerViewEnum.None && !game.hasPlayedInCurrentRound(cell.x, cell.y)
+                canPlay: game.canPlayAt(cell.x, cell.y),
+                isPlayedInCurrentRound: game.hasPlayedInCurrentRound(cell.x, cell.y)
             }
         }))
         this.gameView.update({ isErrorFetch: false, status, cells, round: `${game.round}/${game.maxRound}` });

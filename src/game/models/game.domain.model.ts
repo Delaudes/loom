@@ -114,6 +114,11 @@ export class GameDomainModel {
     hasPlayedInCurrentRound(x: number, y: number): boolean {
         return this.getPlayerRoundActions(this.round).some(action => action.isAt(x, y));
     }
+
+    canPlayAt(x: number, y: number): boolean {
+        if (this.isFinished()) return false;
+        return this.ownedPositions.isUnowned(x, y) && !this.hasPlayedInCurrentRound(x, y);
+    }
 }
 
 export class ActionDomainModel {
@@ -199,6 +204,11 @@ export class OwnedPositionsDomainModel {
         if (this.playerOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Player;
         if (this.opponentOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Opponent;
         return OwnerDomainEnum.None;
+    }
+
+    isUnowned(x: number, y: number): boolean {
+        return !this.playerOwnedPositions.some(p => p.hasX(x) && p.hasY(y))
+            && !this.opponentOwnedPositions.some(p => p.hasX(x) && p.hasY(y));
     }
 
     addPlayerOwnedPositions(position: PositionDomainModel): void {

@@ -69,7 +69,8 @@ describe('FetchGameUseCase', () => {
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         expectedGame.status = StatusViewEnum.SecondPlace;
-        expectedGame.cells[0][0].canPlay = false
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true;
+        expectedGame.cells[0][0].canPlay = false;
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
@@ -80,8 +81,8 @@ describe('FetchGameUseCase', () => {
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
         expectedGame.status = StatusViewEnum.ThirdPlace;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][1].canPlay = false
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
@@ -93,9 +94,9 @@ describe('FetchGameUseCase', () => {
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
         expectedGame.status = StatusViewEnum.FirstPredict;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][1].canPlay = false
-        expectedGame.cells[0][2].canPlay = false
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
@@ -108,10 +109,10 @@ describe('FetchGameUseCase', () => {
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)));
         expectedGame.status = StatusViewEnum.SecondPredict;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][1].canPlay = false
-        expectedGame.cells[0][2].canPlay = false
-        expectedGame.cells[2][0].canPlay = false
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
+        expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
@@ -121,11 +122,11 @@ describe('FetchGameUseCase', () => {
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         simulateFirstPlayerRound();
         expectedGame.status = StatusViewEnum.WaitingOpponent;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][1].canPlay = false
-        expectedGame.cells[0][2].canPlay = false
-        expectedGame.cells[2][0].canPlay = false
-        expectedGame.cells[3][0].canPlay = false
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
+        expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
+        expectedGame.cells[3][0].isPlayedInCurrentRound = true; expectedGame.cells[3][0].canPlay = false;
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
@@ -136,7 +137,6 @@ describe('FetchGameUseCase', () => {
         simulateFirstPlayerRound();
         simulateFirstOpponentRound();
         updateFirstRound(expectedGame);
-
         await fetchGameUseCase.execute();
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     })
@@ -188,14 +188,10 @@ describe('FetchGameUseCase', () => {
 
     function updateFirstRound(expectedGame: GameViewModel) {
         expectedGame.status = StatusViewEnum.FirstPlace;
-        expectedGame.cells[0][1].owner = OwnerViewEnum.Player;
-        expectedGame.cells[0][2].owner = OwnerViewEnum.Opponent;
-        expectedGame.cells[1][0].owner = OwnerViewEnum.Opponent;
-        expectedGame.cells[2][0].owner = OwnerViewEnum.Player;
-        expectedGame.cells[0][1].canPlay = false;
-        expectedGame.cells[0][2].canPlay = false;
-        expectedGame.cells[1][0].canPlay = false;
-        expectedGame.cells[2][0].canPlay = false;
+        expectedGame.cells[0][1].owner = OwnerViewEnum.Player; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].owner = OwnerViewEnum.Opponent; expectedGame.cells[0][2].canPlay = false;
+        expectedGame.cells[1][0].owner = OwnerViewEnum.Opponent; expectedGame.cells[1][0].canPlay = false;
+        expectedGame.cells[2][0].owner = OwnerViewEnum.Player; expectedGame.cells[2][0].canPlay = false;
         expectedGame.round = '2/10';
     }
 
@@ -233,18 +229,13 @@ describe('FetchGameUseCase', () => {
 
     function updatePlayerWinGame(expectedGame: GameViewModel) {
         expectedGame.status = StatusViewEnum.Win;
+        expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
         expectedGame.cells[0][0].owner = OwnerViewEnum.Player;
         expectedGame.cells[0][7].owner = OwnerViewEnum.Player;
         expectedGame.cells[7][0].owner = OwnerViewEnum.Player;
         expectedGame.cells[7][7].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[1][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[2][0].owner = OwnerViewEnum.Opponent;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][7].canPlay = false
-        expectedGame.cells[7][0].canPlay = false
-        expectedGame.cells[7][7].canPlay = false
-        expectedGame.cells[1][0].canPlay = false
-        expectedGame.cells[2][0].canPlay = false
         expectedGame.round = '0/10';
     }
 
@@ -283,18 +274,13 @@ describe('FetchGameUseCase', () => {
 
     function updatePlayerLoseGame(expectedGame: GameViewModel) {
         expectedGame.status = StatusViewEnum.Lost;
+        expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
         expectedGame.cells[0][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[0][7].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[7][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[7][7].owner = OwnerViewEnum.Player;
         expectedGame.cells[1][0].owner = OwnerViewEnum.Player;
         expectedGame.cells[2][0].owner = OwnerViewEnum.Player;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][7].canPlay = false
-        expectedGame.cells[7][0].canPlay = false
-        expectedGame.cells[7][7].canPlay = false
-        expectedGame.cells[1][0].canPlay = false
-        expectedGame.cells[2][0].canPlay = false
         expectedGame.round = "0/10";
     }
 
@@ -332,18 +318,13 @@ describe('FetchGameUseCase', () => {
 
     function updateNoWinnerGame(expectedGame: GameViewModel) {
         expectedGame.status = StatusViewEnum.NoWinner;
+        expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
         expectedGame.cells[0][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[0][7].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[7][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[7][7].owner = OwnerViewEnum.Player;
         expectedGame.cells[6][7].owner = OwnerViewEnum.Player;
         expectedGame.cells[7][6].owner = OwnerViewEnum.Player;
-        expectedGame.cells[0][0].canPlay = false
-        expectedGame.cells[0][7].canPlay = false
-        expectedGame.cells[7][0].canPlay = false
-        expectedGame.cells[7][7].canPlay = false
-        expectedGame.cells[6][7].canPlay = false
-        expectedGame.cells[7][6].canPlay = false
         expectedGame.round = '0/10';
     }
 })
@@ -360,6 +341,7 @@ const gameViewModelInit = (): GameViewModel => {
                 y,
                 owner: OwnerViewEnum.None,
                 canPlay: true,
+                isPlayedInCurrentRound: false,
             }))
         ),
         round: '1/10'

@@ -15,7 +15,8 @@ export class GameView {
                     x,
                     y,
                     owner: OwnerViewEnum.None,
-                    canPlay: true
+                    canPlay: true,
+                    isPlayedInCurrentRound: false
                 }))
             ),
             round: '1/10'

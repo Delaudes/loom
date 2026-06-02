@@ -13,6 +13,7 @@ export type CellViewModel = {
     y: number;
     owner: OwnerViewEnum;
     canPlay: boolean;
+    isPlayedInCurrentRound: boolean;
 }
 
 export enum StatusViewEnum {
@@ -20,8 +21,8 @@ export enum StatusViewEnum {
     FirstPlace = "Posez votre 1er pion",
     SecondPlace = "Posez votre 2ème pion",
     ThirdPlace = "Posez votre 3ème pion",
-    FirstPredict = "Prédisez la 1ère position adverse",
-    SecondPredict = "Prédisez la 2ème position adverse",
+    FirstPredict = "Faites votre 1ère prédiction",
+    SecondPredict = "Faites votre 2ème prédiction",
     Win = "Victoire",
     Lost = "Défaite",
     NoWinner = "Égalité"
