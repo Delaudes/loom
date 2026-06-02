@@ -1,19 +1,24 @@
 <div
-  class="w-10 h-10 sm:w-11 sm:h-11 bg-zinc-900 border-r border-b border-zinc-500 flex items-center justify-center transition-colors duration-200 group hover:bg-zinc-800"
+  class="w-10 h-10 sm:w-11 sm:h-11 bg-zinc-900 border-r border-b border-zinc-500 flex items-center justify-center transition-colors duration-200 group"
   [class.cursor-pointer]="cell().canPlay"
-  [class.cursor-default]="!cell().canPlay">
+  [class.cursor-default]="!cell().canPlay"
+  [class.hover:bg-zinc-800]="cell().canPlay">
 
   @switch (cell().owner) {
     @case (OwnerViewEnum.Player) {
-      <svg viewBox="0 0 24 24" class="w-6 h-6 drop-shadow-sm">
-        <circle cx="12" cy="12" r="9.5" fill="white"/>
-        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.07)" stroke-width="1.5"/>
+      <svg viewBox="0 0 24 24" class="w-6 h-6">
+        <circle cx="12" cy="12" r="9" fill="#e8e8e8"/>
+        <circle cx="9" cy="9" r="4" fill="rgba(255,255,255,0.85)"/>
+        <circle cx="13" cy="14" r="5" fill="rgba(180,180,180,0.2)"/>
+        <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.08)" stroke-width="0.8"/>
       </svg>
     }
     @case (OwnerViewEnum.Opponent) {
-      <svg viewBox="0 0 24 24" class="w-6 h-6 drop-shadow-sm">
-        <circle cx="12" cy="12" r="9.5" fill="#f59e0b"/>
-        <circle cx="12" cy="12" r="8" fill="none" stroke="rgba(0,0,0,0.1)" stroke-width="1.5"/>
+      <svg viewBox="0 0 24 24" class="w-6 h-6">
+        <circle cx="12" cy="12" r="9" fill="#f59e0b"/>
+        <circle cx="9" cy="9" r="4" fill="rgba(255,218,66,0.55)"/>
+        <circle cx="13" cy="14" r="5" fill="rgba(160,90,0,0.18)"/>
+        <circle cx="12" cy="12" r="9" fill="none" stroke="rgba(0,0,0,0.12)" stroke-width="0.8"/>
       </svg>
     }
     @default {
