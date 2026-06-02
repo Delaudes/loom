@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { CellComponent } from "../../../cell/cell.component";
 import { GameView } from '../../core/game.view';
+import { CellComponent } from "../cell/cell.component";
 
 @Component({
   selector: 'app-game-board',

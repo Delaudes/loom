@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
-import { CellViewModel, OwnerViewEnum } from '../game/models/game.view.model';
+import { CellViewModel, OwnerViewEnum } from '../../models/game.view.model';
 
 @Component({
   selector: 'app-cell',
