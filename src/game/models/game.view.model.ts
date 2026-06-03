@@ -1,8 +1,10 @@
 export type GameViewModel = {
     isLoadingCreate: boolean;
     isLoadingFetch: boolean;
+    isLoadingJoin: boolean;
     isErrorCreate: boolean;
     isErrorFetch: boolean;
+    isErrorJoin: boolean;
     status?: StatusViewEnum;
     cells: CellViewModel[][];
     round: string;

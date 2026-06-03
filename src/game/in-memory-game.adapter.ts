@@ -34,4 +34,14 @@ export class InMemoryGameAdapter implements GamePort {
         new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 2)),
         new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 3))]);
     }
+
+    async joinGame(gameId: string): Promise<NewGameDomainModel> {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        if (gameId === "error") {
+            throw new Error();
+        }
+
+        return new NewGameDomainModel(gameId, "opponentId");
+    }
 }

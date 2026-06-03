@@ -8,8 +8,10 @@ export class GameView {
         gameViewModel.set({
             isLoadingCreate: false,
             isLoadingFetch: false,
+            isLoadingJoin: false,
             isErrorCreate: false,
             isErrorFetch: false,
+            isErrorJoin: false,
             cells: Array.from({ length: 8 }, (_, x) =>
                 Array.from({ length: 8 }, (_, y) => ({
                     x,

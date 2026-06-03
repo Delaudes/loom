@@ -314,8 +314,6 @@ describe('FetchGameUseCase', () => {
         }
     }
 
-
-
     function updateNoWinnerGame(expectedGame: GameViewModel) {
         expectedGame.status = StatusViewEnum.NoWinner;
         expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
@@ -333,8 +331,10 @@ const gameViewModelInit = (): GameViewModel => {
     return {
         isLoadingCreate: false,
         isLoadingFetch: false,
+        isLoadingJoin: false,
         isErrorCreate: false,
         isErrorFetch: false,
+        isErrorJoin: false,
         cells: Array.from({ length: 8 }, (_, x) =>
             Array.from({ length: 8 }, (_, y) => ({
                 x,
