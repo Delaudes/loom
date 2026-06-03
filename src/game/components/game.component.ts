@@ -1,14 +1,12 @@
 import { ChangeDetectionStrategy, Component, inject, OnInit } from '@angular/core';
-import { BackHomeComponent } from "../../home/back-home/back-home.component";
 import { FetchGameUseCase } from '../core/fetch-game.use-case';
 import { GameView } from '../core/game.view';
 import { GameBoardComponent } from "./game-board/game-board.component";
-import { GameRulesComponent } from "./game-rules/game-rules.component";
-import { ShareGameComponent } from './share-game/share-game.component';
+import { HeaderGameComponent } from './header-game/header-game.component';
 
 @Component({
   selector: 'app-game',
-  imports: [BackHomeComponent, ShareGameComponent, GameRulesComponent, GameBoardComponent],
+  imports: [HeaderGameComponent, GameBoardComponent],
   templateUrl: './game.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
   providers: []
