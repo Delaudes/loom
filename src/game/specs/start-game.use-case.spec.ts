@@ -33,26 +33,38 @@ describe('StartGameUseCase', () => {
     });
 
     it('should display error if game creation fails', async () => {
-        expect(gameView.gameViewModel.get().isErrorCreate).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isErrorCreate).toBe(false);
+
         await startGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isErrorCreate).toBe(true);
     });
 
     it('should display loading during game creation success', async () => {
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
+
         const promise = startGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
     });
 
     it('should display loading during game creation failure', async () => {
-        expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
+
         const promise = startGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
     });
 });

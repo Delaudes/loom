@@ -9,6 +9,7 @@ export class FakeGameAdapter implements GamePort {
     fetchedGameId?: string;
     fetchedPlayerId?: string;
     joinedGameId?: string;
+    fetchCallCount = 0;
 
     async createGame(): Promise<NewGameDomainModel> {
         if (this.error) {
@@ -23,6 +24,7 @@ export class FakeGameAdapter implements GamePort {
         }
         this.fetchedGameId = gameId;
         this.fetchedPlayerId = playerId;
+        this.fetchCallCount++;
         return this.game;
     }
 

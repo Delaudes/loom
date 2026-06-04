@@ -1,5 +1,6 @@
 import { AppParam } from "../../app/app.routes";
 import { FakeSignalWrapper } from "../../signal/fake-signal.wrapper";
+import { FakeTimerWrapper } from "../../timer/fake-timer.wrapper";
 import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
 import { FetchGameUseCase } from "../core/fetch-game.use-case";
 import { GameView } from "../core/game.view";
@@ -10,6 +11,7 @@ import { FakeGameAdapter } from "./fake-game.adapter";
 describe('FetchGameUseCase', () => {
     let fetchGameUseCase: FetchGameUseCase;
     let fakeGameAdapter: FakeGameAdapter;
+    let fakeTimerWrapper: FakeTimerWrapper;
     let gameView: GameView;
     let fakeUiWrapper: FakeUiWrapper;
 
@@ -17,157 +19,244 @@ describe('FetchGameUseCase', () => {
         fakeUiWrapper = new FakeUiWrapper();
         gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
         fakeGameAdapter = new FakeGameAdapter();
-        fetchGameUseCase = new FetchGameUseCase(gameView, fakeGameAdapter);
+        fakeTimerWrapper = new FakeTimerWrapper();
+        fetchGameUseCase = new FetchGameUseCase(gameView, fakeGameAdapter, fakeTimerWrapper);
     })
 
     it('should fetch the right game for the right player', () => {
-        expect(fakeGameAdapter.fetchedGameId).toBeUndefined();
-        expect(fakeGameAdapter.fetchedPlayerId).toBeUndefined();
         const gameId = 'gameId';
         const playerId = 'playerId';
-        fakeUiWrapper.params[AppParam.GameId] = gameId
-        fakeUiWrapper.params[AppParam.PlayerId] = playerId
+        fakeUiWrapper.params[AppParam.GameId] = gameId;
+        fakeUiWrapper.params[AppParam.PlayerId] = playerId;
+
+        expect(fakeGameAdapter.fetchedGameId).toBeUndefined();
+        expect(fakeGameAdapter.fetchedPlayerId).toBeUndefined();
+
         fetchGameUseCase.execute();
+
         expect(fakeGameAdapter.fetchedGameId).toBe(gameId);
         expect(fakeGameAdapter.fetchedPlayerId).toBe(playerId);
     });
 
     it('should display loading during game fetching', async () => {
         expect(gameView.gameViewModel.get().isLoadingFetch).toBe(false);
+
         const promise = fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingFetch).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingFetch).toBe(false);
     });
 
     it('should display error if game fetching fails', async () => {
-        expect(gameView.gameViewModel.get().isErrorFetch).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isErrorFetch).toBe(false);
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isErrorFetch).toBe(true);
     });
 
     it('should display loading during game fetching failure', async () => {
-        expect(gameView.gameViewModel.get().isLoadingFetch).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isLoadingFetch).toBe(false);
+
         const promise = fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingFetch).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingFetch).toBe(false);
     });
 
     it('should display game a te the beginning', async () => {
         const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         expectedGame.status = StatusViewEnum.FirstPlace;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game after first placement', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
+        const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.SecondPlace;
         expectedGame.cells[0][0].isPlayedInCurrentRound = true;
         expectedGame.cells[0][0].canPlay = false;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game after second placement', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
+        const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.ThirdPlace;
         expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
         expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game after third placement', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
+        const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.FirstPredict;
         expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
         expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
         expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game after first prediction', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)));
+        const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.SecondPredict;
         expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
         expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
         expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
         expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game after round complete', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         simulateFirstPlayerRound();
+        const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.WaitingOpponent;
         expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
         expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
         expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
         expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
         expectedGame.cells[3][0].isPlayedInCurrentRound = true; expectedGame.cells[3][0].canPlay = false;
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     });
 
     it('should display game cells owner', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
         simulateFirstPlayerRound();
         simulateFirstOpponentRound();
+        const expectedGame = gameViewModelInit();
         updateFirstRound(expectedGame);
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     })
 
     it('should display winning player game with toroidal territory', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
-        simulatePlayerWinGame()
+        simulatePlayerWinGame();
         simulateOpponentLoseGame();
+        const expectedGame = gameViewModelInit();
         updatePlayerWinGame(expectedGame);
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     })
 
     it('should display losing player game with toroidal territory', async () => {
-        const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
-        simulatePlayerLoseGame()
+        simulatePlayerLoseGame();
         simulateOpponentWinGame();
+        const expectedGame = gameViewModelInit();
         updatePlayerLoseGame(expectedGame);
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
     })
 
     it('should display no winner game with toroidal territory', async () => {
+        simulateNoWinnerGame();
         const expectedGame = gameViewModelInit();
-        expect(gameView.gameViewModel.get()).toEqual(expectedGame);
-        simulateNoWinnerGame()
         updateNoWinnerGame(expectedGame);
+
+        expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
+
         await fetchGameUseCase.execute();
+
         expect(gameView.gameViewModel.get()).toEqual(expectedGame);
+    })
+
+    it('should schedule a refetch after 5000ms when status is WaitingOpponent', async () => {
+        simulateFirstPlayerRound();
+
+        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
+        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeGameAdapter.fetchCallCount).toEqual(0);
+
+        await fetchGameUseCase.execute();
+
+        expect(fakeTimerWrapper.scheduledMs).toBe(5000);
+        expect(fakeTimerWrapper.scheduledCallback).not.toBeUndefined();
+        expect(fakeGameAdapter.fetchCallCount).toEqual(1);
+
+        await fakeTimerWrapper.trigger();
+
+        expect(fakeGameAdapter.fetchCallCount).toEqual(2);
+    });
+
+    it('should not schedule refetch when the game is finished', async () => {
+        simulatePlayerWinGame();
+        simulateOpponentLoseGame();
+
+        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
+        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+
+        await fetchGameUseCase.execute();
+
+        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
+        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+    })
+
+    it('should not schedule refetch when player have next action', async () => {
+        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
+        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+
+        await fetchGameUseCase.execute();
+
+        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
+        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
     })
 
     function simulateFirstPlayerRound() {

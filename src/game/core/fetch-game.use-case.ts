@@ -1,10 +1,15 @@
+import { TimerPort } from "../../timer/timer.port";
 import { GameDomainModel, OwnedPositionsDomainModel, OwnerDomainEnum } from "../models/game.domain.model";
 import { CellViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
 
 export class FetchGameUseCase {
-    constructor(private readonly gameView: GameView, private readonly gamePort: GamePort) { }
+    constructor(
+        private readonly gameView: GameView,
+        private readonly gamePort: GamePort,
+        private readonly timerPort: TimerPort
+    ) { }
 
     async execute(): Promise<void> {
         this.startLoadingFetchGame();
@@ -12,11 +17,18 @@ export class FetchGameUseCase {
             const gameId = this.gameView.fetchGameId();
             const playerId = this.gameView.fetchPlayerId();
             const game = await this.gamePort.fetchGame(gameId, playerId);
-            this.presentFetchGame(game)
+            this.presentFetchGame(game);
+            this.scheduleNextFetchIfWaiting(game);
         } catch {
             this.presentErrorFetchGame()
         }
         this.stopLoadingFetchGame();
+    }
+
+    private scheduleNextFetchIfWaiting(game: GameDomainModel): void {
+        if (game.isWaitingForOpponent()) {
+            this.timerPort.scheduleOnce(() => this.execute(), 5000);
+        }
     }
 
     private startLoadingFetchGame(): void {

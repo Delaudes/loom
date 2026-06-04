@@ -20,10 +20,13 @@ describe('JoinGameUseCase', () => {
     })
 
     it('should join the right game', async () => {
-        expect(fakeGameAdapter.joinedGameId).toBeUndefined();
         const gameId = 'gameId';
-        fakeUiWrapper.params[AppParam.GameId] = gameId
+        fakeUiWrapper.params[AppParam.GameId] = gameId;
+
+        expect(fakeGameAdapter.joinedGameId).toBeUndefined();
+
         joinGameUseCase.execute();
+
         expect(fakeGameAdapter.joinedGameId).toBe(gameId);
     });
 
@@ -41,26 +44,38 @@ describe('JoinGameUseCase', () => {
     });
 
     it('should display error if game join fails', async () => {
-        expect(gameView.gameViewModel.get().isErrorJoin).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isErrorJoin).toBe(false);
+
         await joinGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isErrorJoin).toBe(true);
     });
 
     it('should display loading during game join success', async () => {
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
+
         const promise = joinGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
     });
 
     it('should display loading during game join failure', async () => {
-        expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
         fakeGameAdapter.error = new Error();
+
+        expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
+
         const promise = joinGameUseCase.execute();
+
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(true);
+
         await promise;
+
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
     });
 });

@@ -14,11 +14,14 @@ describe('GameView', () => {
     });
 
     it('should share game', () => {
-        expect(fakeUiWrapper.shareText).toBeUndefined();
-        expect(fakeUiWrapper.sharePath).toBeUndefined();
         const gameId = 'gameId';
         fakeUiWrapper.params[AppParam.GameId] = gameId;
+
+        expect(fakeUiWrapper.shareText).toBeUndefined();
+        expect(fakeUiWrapper.sharePath).toBeUndefined();
+
         gameView.shareGame();
+
         expect(fakeUiWrapper.shareText).toEqual(`Viens me défier sur LOOM !\n`);
         expect(fakeUiWrapper.sharePath).toEqual(AppPath.Games + '/' + gameId);
     });

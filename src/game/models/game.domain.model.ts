@@ -47,6 +47,10 @@ export class GameDomainModel {
         return this.round === 0
     }
 
+    isWaitingForOpponent(): boolean {
+        return !this.isFinished() && this.nextPlayerAction === undefined;
+    }
+
     isPlayerWin(): boolean {
         return this.ownedPositions.isPlayerWin();
     }

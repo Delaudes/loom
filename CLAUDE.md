@@ -57,6 +57,12 @@ Example: `SignalPort<T>` → `AngularSignalWrapper` / `FakeSignalWrapper`
 - All specs live in `specs/` subfolder alongside the feature
 - Fakes replace all ports — no mocking framework needed
 - Specs test use cases and views, not components
+- Tests follow the **Arrange → Assert initial → Act → Assert final** pattern:
+  1. **Arrange** — set up all state (adapter data, expected result object with mutations)
+  2. **Assert initial** — verify the state before the action
+  3. **Act** — call `execute()` or the method under test
+  4. **Assert final** — verify the state after the action
+- The initial assert uses a fresh reference (e.g. `gameViewModelInit()`) so mutations to the expected object don't affect it
 
 ### File naming
 ```

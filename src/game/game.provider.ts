@@ -1,5 +1,6 @@
 import { InjectionToken } from "@angular/core";
 import { AngularSignalWrapper } from "../signal/angular-signal.wrapper";
+import { TIMER_TOKEN } from "../timer/timer.provider";
 import { UiPort } from "../ui/ui.port";
 import { UI_TOKEN } from "../ui/ui.provider";
 import { GamePort } from "./core/game.port";
@@ -19,7 +20,7 @@ export const GAME_TOKEN = new InjectionToken<GamePort>('GAME_TOKEN', {
 export const GAME_PROVIDERS = [
     {
         provide: FetchGameUseCase,
-        deps: [GameView, GAME_TOKEN],
+        deps: [GameView, GAME_TOKEN, TIMER_TOKEN],
     },
     {
         provide: StartGameUseCase,
