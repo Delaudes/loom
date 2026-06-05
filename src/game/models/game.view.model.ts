@@ -19,7 +19,7 @@ export type CellViewModel = {
 }
 
 export enum StatusViewEnum {
-    WaitingOpponent = "En attente de l'adversaire",
+    WaitingOpponent = "En attente de l'adversaire...",
     FirstPlace = "Posez votre 1er pion",
     SecondPlace = "Posez votre 2ème pion",
     ThirdPlace = "Posez votre 3ème pion",

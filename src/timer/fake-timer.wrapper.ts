@@ -9,6 +9,11 @@ export class FakeTimerWrapper implements TimerPort {
         this.scheduledMs = ms;
     }
 
+    cancel(): void {
+        this.scheduledCallback = undefined;
+        this.scheduledMs = undefined;
+    }
+
     async trigger(): Promise<void> {
         await this.scheduledCallback?.();
     }

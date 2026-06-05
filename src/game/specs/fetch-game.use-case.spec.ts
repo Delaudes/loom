@@ -259,6 +259,24 @@ describe('FetchGameUseCase', () => {
         expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
     })
 
+    it('should cancel pending refetch when execute is called again', async () => {
+        simulateFirstPlayerRound();
+
+        await fetchGameUseCase.execute();
+
+        expect(fakeTimerWrapper.scheduledCallback).not.toBeUndefined();
+        expect(fakeGameAdapter.fetchCallCount).toEqual(1);
+
+        await fetchGameUseCase.execute();
+
+        expect(fakeTimerWrapper.scheduledCallback).not.toBeUndefined();
+        expect(fakeGameAdapter.fetchCallCount).toEqual(2);
+
+        await fakeTimerWrapper.trigger();
+
+        expect(fakeGameAdapter.fetchCallCount).toEqual(3);
+    })
+
     function simulateFirstPlayerRound() {
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
         fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));

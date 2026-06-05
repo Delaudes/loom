@@ -12,7 +12,13 @@ export class FetchGameUseCase {
     ) { }
 
     async execute(): Promise<void> {
+        this.timerPort.cancel();
         this.startLoadingFetchGame();
+        await this.fetchGame();
+        this.stopLoadingFetchGame();
+    }
+
+    private async fetchGame() {
         try {
             const gameId = this.gameView.fetchGameId();
             const playerId = this.gameView.fetchPlayerId();
@@ -20,14 +26,13 @@ export class FetchGameUseCase {
             this.presentFetchGame(game);
             this.scheduleNextFetchIfWaiting(game);
         } catch {
-            this.presentErrorFetchGame()
+            this.presentErrorFetchGame();
         }
-        this.stopLoadingFetchGame();
     }
 
     private scheduleNextFetchIfWaiting(game: GameDomainModel): void {
         if (game.isWaitingForOpponent()) {
-            this.timerPort.scheduleOnce(() => this.execute(), 5000);
+            this.timerPort.scheduleOnce(() => this.fetchGame(), 5000);
         }
     }
 
