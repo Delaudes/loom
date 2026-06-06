@@ -4,6 +4,7 @@ import { FakeTimerWrapper } from "../../timer/fake-timer.wrapper";
 import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
 import { FetchGameUseCase } from "../core/fetch-game.use-case";
 import { GameView } from "../core/game.view";
+import { RefreshGameService } from "../core/refresh-game.service";
 import { ActionDomainModel, ActionTypeDomainEnum, PositionDomainModel } from "../models/game.domain.model";
 import { GameViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
 import { FakeGameAdapter } from "./fake-game.adapter";
@@ -20,7 +21,8 @@ describe('FetchGameUseCase', () => {
         gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
         fakeGameAdapter = new FakeGameAdapter();
         fakeTimerWrapper = new FakeTimerWrapper();
-        fetchGameUseCase = new FetchGameUseCase(gameView, fakeGameAdapter, fakeTimerWrapper);
+        const refreshGameService = new RefreshGameService(gameView, fakeGameAdapter, fakeTimerWrapper);
+        fetchGameUseCase = new FetchGameUseCase(gameView, fakeTimerWrapper, refreshGameService);
     })
 
     it('should fetch the right game for the right player', () => {
