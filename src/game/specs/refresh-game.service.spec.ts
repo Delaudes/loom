@@ -39,7 +39,7 @@ describe('RefreshGameService', () => {
     });
 
     it('should throw if game fetching fails', async () => {
-        fakeGameAdapter.error = new Error();
+        fakeGameAdapter.fetchError = new Error();
         await expect(refreshGameService.execute()).rejects.toThrow();
     });
 
@@ -123,11 +123,12 @@ describe('RefreshGameService', () => {
         simulateFirstPlayerRound();
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.WaitingOpponent;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
-        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
-        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
-        expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
-        expectedGame.cells[3][0].isPlayedInCurrentRound = true; expectedGame.cells[3][0].canPlay = false;
+        expectedGame.cells[0][0].isPlayedInCurrentRound = true;
+        expectedGame.cells[0][1].isPlayedInCurrentRound = true;
+        expectedGame.cells[0][2].isPlayedInCurrentRound = true;
+        expectedGame.cells[2][0].isPlayedInCurrentRound = true;
+        expectedGame.cells[3][0].isPlayedInCurrentRound = true;
+        expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
 
