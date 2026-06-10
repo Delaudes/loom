@@ -1,12 +1,12 @@
 import { TimerPort } from "../../timer/timer.port";
 import { GameView } from "./game.view";
-import { RefreshGameService } from "./refresh-game.service";
+import { RefreshGamePort } from "./refresh-game.port";
 
 export class FetchGameUseCase {
     constructor(
         private readonly gameView: GameView,
         private readonly timerPort: TimerPort,
-        private readonly refreshGameService: RefreshGameService,
+        private readonly refreshGameService: RefreshGamePort,
     ) { }
 
     async execute(): Promise<void> {

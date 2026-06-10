@@ -120,7 +120,7 @@ export class GameDomainModel {
     }
 
     canPlayAt(x: number, y: number): boolean {
-        if (this.isFinished()) return false;
+        if (!this.nextPlayerAction) return false;
         return this.ownedPositions.isUnowned(x, y) && !this.hasPlayedInCurrentRound(x, y);
     }
 }

@@ -3,8 +3,9 @@ import { GameDomainModel, OwnedPositionsDomainModel, OwnerDomainEnum } from "../
 import { CellViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
+import { RefreshGamePort } from "./refresh-game.port";
 
-export class RefreshGameService {
+export class RefreshGameService implements RefreshGamePort {
     constructor(
         private readonly gameView: GameView,
         private readonly gamePort: GamePort,

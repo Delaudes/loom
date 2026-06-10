@@ -12,6 +12,7 @@ export class GameView {
             isErrorCreate: false,
             isErrorFetch: false,
             isErrorJoin: false,
+            isErrorPlay: false,
             cells: Array.from({ length: 8 }, (_, x) =>
                 Array.from({ length: 8 }, (_, y) => ({
                     x,

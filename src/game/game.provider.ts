@@ -3,10 +3,11 @@ import { AngularSignalWrapper } from "../signal/angular-signal.wrapper";
 import { TIMER_TOKEN } from "../timer/timer.provider";
 import { UiPort } from "../ui/ui.port";
 import { UI_TOKEN } from "../ui/ui.provider";
-import { GamePort } from "./core/game.port";
 import { FetchGameUseCase } from "./core/fetch-game.use-case";
+import { GamePort } from "./core/game.port";
 import { GameView } from "./core/game.view";
 import { JoinGameUseCase } from "./core/join-game.use-case";
+import { PlayCellUseCase } from "./core/play-cell.use-case";
 import { RefreshGameService } from "./core/refresh-game.service";
 import { StartGameUseCase } from "./core/start-game.use-case";
 import { InMemoryGameAdapter } from "./in-memory-game.adapter";
@@ -22,6 +23,10 @@ export const GAME_PROVIDERS = [
     {
         provide: RefreshGameService,
         deps: [GameView, GAME_TOKEN, TIMER_TOKEN],
+    },
+    {
+        provide: PlayCellUseCase,
+        deps: [GameView, GAME_TOKEN, RefreshGameService],
     },
     {
         provide: FetchGameUseCase,

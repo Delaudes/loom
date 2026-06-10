@@ -1,20 +1,21 @@
-<div
+<button
+  (click)="playCellUseCase.execute(cell().x, cell().y)"
   class="w-10 h-10 sm:w-11 sm:h-11 bg-zinc-900 border-r border-b border-zinc-500 flex items-center justify-center transition-colors duration-200 group"
   [class.cursor-pointer]="cell().canPlay"
   [class.cursor-default]="!cell().canPlay"
-  [class.hover:bg-zinc-800]="cell().canPlay">
-
+  [class.hover:bg-zinc-800]="cell().canPlay"
+>
   @switch (cell().owner) {
     @case (OwnerViewEnum.Player) {
-      <img src="/player-token.svg" class="w-6 h-6">
+      <img src="/player-token.svg" class="w-6 h-6" />
     }
     @case (OwnerViewEnum.Opponent) {
-      <img src="/opponent-token.svg" class="w-6 h-6">
+      <img src="/opponent-token.svg" class="w-6 h-6" />
     }
     @default {
       @if (cell().isPlayedInCurrentRound) {
-        <img src="/player-token.svg" class="w-6 h-6 opacity-25">
+        <img src="/player-token.svg" class="w-6 h-6 opacity-25" />
       }
     }
   }
-</div>
+</button>

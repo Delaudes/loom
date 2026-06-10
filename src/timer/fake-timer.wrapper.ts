@@ -9,7 +9,10 @@ export class FakeTimerWrapper implements TimerPort {
         this.scheduledMs = ms;
     }
 
+    cancelCallCount = 0;
+
     cancel(): void {
+        this.cancelCallCount++;
         this.scheduledCallback = undefined;
         this.scheduledMs = undefined;
     }

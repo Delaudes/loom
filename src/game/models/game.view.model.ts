@@ -5,6 +5,7 @@ export type GameViewModel = {
     isErrorCreate: boolean;
     isErrorFetch: boolean;
     isErrorJoin: boolean;
+    isErrorPlay: boolean;
     status?: StatusViewEnum;
     cells: CellViewModel[][];
     round: string;

@@ -1,4 +1,5 @@
 import { GamePort } from "./core/game.port";
+import { CellApiModel } from "./models/game.api.model";
 import { ActionDomainModel, ActionTypeDomainEnum, GameDomainModel, NewGameDomainModel, PositionDomainModel } from "./models/game.domain.model";
 
 export class InMemoryGameAdapter implements GamePort {
@@ -30,7 +31,9 @@ export class InMemoryGameAdapter implements GamePort {
         ], [new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
         new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)),
         new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)),
-        new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 2)),]);
+        new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 2)),
+        new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 3))
+        ]);
     }
 
     async joinGame(gameId: string): Promise<NewGameDomainModel> {
@@ -41,5 +44,15 @@ export class InMemoryGameAdapter implements GamePort {
         }
 
         return new NewGameDomainModel(gameId, "opponentId");
+    }
+
+    async playCell(cell: CellApiModel): Promise<void> {
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        if (cell.playerId === "error") {
+            throw new Error();
+        }
+
+        return;
     }
 }
