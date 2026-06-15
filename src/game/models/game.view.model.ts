@@ -9,6 +9,8 @@ export type GameViewModel = {
     status?: StatusViewEnum;
     cells: CellViewModel[][];
     round: string;
+    playerTerritorySize: number;
+    opponentTerritorySize: number;
 }
 
 export type CellViewModel = {
@@ -17,6 +19,8 @@ export type CellViewModel = {
     owner: OwnerViewEnum;
     canPlay: boolean;
     isPlayedInCurrentRound: boolean;
+    isInPlayerLargestTerritory: boolean;
+    isInOpponentLargestTerritory: boolean;
 }
 
 export enum StatusViewEnum {

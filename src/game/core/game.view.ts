@@ -19,10 +19,14 @@ export class GameView {
                     y,
                     owner: OwnerViewEnum.None,
                     canPlay: true,
-                    isPlayedInCurrentRound: false
+                    isPlayedInCurrentRound: false,
+                    isInPlayerLargestTerritory: false,
+                    isInOpponentLargestTerritory: false
                 }))
             ),
-            round: '1/10'
+            round: '1/10',
+            playerTerritorySize: 0,
+            opponentTerritorySize: 0
         });
     }
 

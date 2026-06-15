@@ -29,16 +29,25 @@ export class RefreshGameService implements RefreshGamePort {
     private presentGame(game: GameDomainModel): void {
         const status = this.getStatus(game);
         const ownedPositions = game.ownedPositions;
+        const largestPlayer = ownedPositions.largestPlayerTerritory;
+        const largestOpponent = ownedPositions.largestOpponentTerritory;
         const cells = this.gameView.gameViewModel.get().cells.map(row => row.map(cell => {
             const owner = this.getOwner(cell, ownedPositions);
             return {
                 ...cell,
                 owner,
                 canPlay: game.canPlayAt(cell.x, cell.y),
-                isPlayedInCurrentRound: game.hasPlayedInCurrentRound(cell.x, cell.y)
+                isPlayedInCurrentRound: game.hasPlayedInCurrentRound(cell.x, cell.y),
+                isInPlayerLargestTerritory: largestPlayer.some(p => p.hasX(cell.x) && p.hasY(cell.y)),
+                isInOpponentLargestTerritory: largestOpponent.some(p => p.hasX(cell.x) && p.hasY(cell.y)),
             };
         }));
-        this.gameView.update({ status, cells, round: `${game.round}/${game.maxRound}` });
+        this.gameView.update({
+            status, cells,
+            round: `${game.round}/${game.maxRound}`,
+            playerTerritorySize: largestPlayer.length,
+            opponentTerritorySize: largestOpponent.length
+        });
     }
 
     private getStatus(game: GameDomainModel): StatusViewEnum | undefined {

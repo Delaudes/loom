@@ -252,6 +252,10 @@ describe('RefreshGameService', () => {
         expectedGame.cells[1][0].owner = OwnerViewEnum.Opponent; expectedGame.cells[1][0].canPlay = false;
         expectedGame.cells[2][0].owner = OwnerViewEnum.Player; expectedGame.cells[2][0].canPlay = false;
         expectedGame.round = '2/10';
+        expectedGame.playerTerritorySize = 1;
+        expectedGame.opponentTerritorySize = 1;
+        expectedGame.cells[0][1].isInPlayerLargestTerritory = true;
+        expectedGame.cells[0][2].isInOpponentLargestTerritory = true;
     }
 
     function simulatePlayerWinGame() {
@@ -294,6 +298,13 @@ describe('RefreshGameService', () => {
         expectedGame.cells[1][0].owner = OwnerViewEnum.Opponent;
         expectedGame.cells[2][0].owner = OwnerViewEnum.Opponent;
         expectedGame.round = '0/10';
+        expectedGame.playerTerritorySize = 3;
+        expectedGame.opponentTerritorySize = 2;
+        expectedGame.cells[0][0].isInPlayerLargestTerritory = true;
+        expectedGame.cells[0][7].isInPlayerLargestTerritory = true;
+        expectedGame.cells[7][0].isInPlayerLargestTerritory = true;
+        expectedGame.cells[1][0].isInOpponentLargestTerritory = true;
+        expectedGame.cells[2][0].isInOpponentLargestTerritory = true;
     }
 
     function simulatePlayerLoseGame() {
@@ -336,6 +347,13 @@ describe('RefreshGameService', () => {
         expectedGame.cells[1][0].owner = OwnerViewEnum.Player;
         expectedGame.cells[2][0].owner = OwnerViewEnum.Player;
         expectedGame.round = "0/10";
+        expectedGame.playerTerritorySize = 2;
+        expectedGame.opponentTerritorySize = 3;
+        expectedGame.cells[1][0].isInPlayerLargestTerritory = true;
+        expectedGame.cells[2][0].isInPlayerLargestTerritory = true;
+        expectedGame.cells[0][0].isInOpponentLargestTerritory = true;
+        expectedGame.cells[0][7].isInOpponentLargestTerritory = true;
+        expectedGame.cells[7][0].isInOpponentLargestTerritory = true;
     }
 
     function simulateNoWinnerGame() {
@@ -375,6 +393,14 @@ describe('RefreshGameService', () => {
         expectedGame.cells[6][7].owner = OwnerViewEnum.Player;
         expectedGame.cells[7][6].owner = OwnerViewEnum.Player;
         expectedGame.round = '0/10';
+        expectedGame.playerTerritorySize = 3;
+        expectedGame.opponentTerritorySize = 3;
+        expectedGame.cells[7][7].isInPlayerLargestTerritory = true;
+        expectedGame.cells[6][7].isInPlayerLargestTerritory = true;
+        expectedGame.cells[7][6].isInPlayerLargestTerritory = true;
+        expectedGame.cells[0][0].isInOpponentLargestTerritory = true;
+        expectedGame.cells[0][7].isInOpponentLargestTerritory = true;
+        expectedGame.cells[7][0].isInOpponentLargestTerritory = true;
     }
 });
 
@@ -393,7 +419,11 @@ const gameViewModelInit = (): GameViewModel => ({
             owner: OwnerViewEnum.None,
             canPlay: true,
             isPlayedInCurrentRound: false,
+            isInPlayerLargestTerritory: false,
+            isInOpponentLargestTerritory: false,
         }))
     ),
-    round: '1/10'
+    round: '1/10',
+    playerTerritorySize: 0,
+    opponentTerritorySize: 0,
 });
