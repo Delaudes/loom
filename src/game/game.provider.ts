@@ -10,12 +10,12 @@ import { JoinGameUseCase } from "./core/join-game.use-case";
 import { PlayCellUseCase } from "./core/play-cell.use-case";
 import { RefreshGameService } from "./core/refresh-game.service";
 import { StartGameUseCase } from "./core/start-game.use-case";
-import { InMemoryGameAdapter } from "./in-memory-game.adapter";
+import { LocalStorageGameAdapter } from "./local-storage-game.adapter";
 import { GameViewModel } from "./models/game.view.model";
 
 export const GAME_TOKEN = new InjectionToken<GamePort>('GAME_TOKEN', {
     providedIn: 'root',
-    factory: () => new InMemoryGameAdapter()
+    factory: () => new LocalStorageGameAdapter()
 });
 
 
