@@ -1,9 +1,26 @@
-<div class="inline-flex flex-col border-t border-l border-zinc-500">
-  @for (row of gameView.gameViewModel.get().cells; track $index) {
-    <div class="flex">
-      @for (cell of row; track $index) {
-        <app-cell [cell]="cell"></app-cell>
+<div class="flex flex-col items-center gap-3">
+  <div class="overflow-hidden select-none">
+    <div
+      class="inline-flex flex-col border-t border-l border-zinc-500"
+      [style.transform]="'translate(' + tx.get() + 'px, ' + ty.get() + 'px)'"
+      [style.transition]="animated.get() ? 'transform 200ms ease-in-out' : 'none'"
+    >
+      @for (row of shiftedCells; track $index) {
+        <div class="flex">
+          @for (cell of row; track $index) {
+            <app-cell [cell]="cell"></app-cell>
+          }
+        </div>
       }
     </div>
-  }
+  </div>
+
+  <div class="flex flex-col items-center gap-1">
+    <button (click)="shiftUp()" class="w-8 h-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 rounded transition-colors cursor-pointer">↑</button>
+    <div class="flex gap-1">
+      <button (click)="shiftLeft()" class="w-8 h-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 rounded transition-colors cursor-pointer">←</button>
+      <button (click)="shiftDown()" class="w-8 h-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 rounded transition-colors cursor-pointer">↓</button>
+      <button (click)="shiftRight()" class="w-8 h-8 text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800 rounded transition-colors cursor-pointer">→</button>
+    </div>
+  </div>
 </div>
