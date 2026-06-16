@@ -5,7 +5,7 @@ import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
 import { GameView } from "../core/game.view";
 import { RefreshGameService } from "../core/refresh-game.service";
 import { ActionDomainModel, ActionTypeDomainEnum, PositionDomainModel } from "../models/game.domain.model";
-import { GameViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
+import { CurrentRoundActionViewEnum, GameViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
 import { FakeGameAdapter } from "./fake-game.adapter";
 
 describe('RefreshGameService', () => {
@@ -55,10 +55,12 @@ describe('RefreshGameService', () => {
     });
 
     it('should display game after first placement', async () => {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+        ]);
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.SecondPlace;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true;
+        expectedGame.cells[0][0].currentRoundAction = CurrentRoundActionViewEnum.Place1;
         expectedGame.cells[0][0].canPlay = false;
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
@@ -69,12 +71,14 @@ describe('RefreshGameService', () => {
     });
 
     it('should display game after second placement', async () => {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+        ]);
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.ThirdPlace;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
-        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][0].currentRoundAction = CurrentRoundActionViewEnum.Place1; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].currentRoundAction = CurrentRoundActionViewEnum.Place2; expectedGame.cells[0][1].canPlay = false;
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
 
@@ -84,14 +88,16 @@ describe('RefreshGameService', () => {
     });
 
     it('should display game after third placement', async () => {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+        ]);
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.FirstPredict;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
-        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
-        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
+        expectedGame.cells[0][0].currentRoundAction = CurrentRoundActionViewEnum.Place1; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].currentRoundAction = CurrentRoundActionViewEnum.Place2; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].currentRoundAction = CurrentRoundActionViewEnum.Place3; expectedGame.cells[0][2].canPlay = false;
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
 
@@ -101,16 +107,18 @@ describe('RefreshGameService', () => {
     });
 
     it('should display game after first prediction', async () => {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)),
+        ]);
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.SecondPredict;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true; expectedGame.cells[0][0].canPlay = false;
-        expectedGame.cells[0][1].isPlayedInCurrentRound = true; expectedGame.cells[0][1].canPlay = false;
-        expectedGame.cells[0][2].isPlayedInCurrentRound = true; expectedGame.cells[0][2].canPlay = false;
-        expectedGame.cells[2][0].isPlayedInCurrentRound = true; expectedGame.cells[2][0].canPlay = false;
+        expectedGame.cells[0][0].currentRoundAction = CurrentRoundActionViewEnum.Place1; expectedGame.cells[0][0].canPlay = false;
+        expectedGame.cells[0][1].currentRoundAction = CurrentRoundActionViewEnum.Place2; expectedGame.cells[0][1].canPlay = false;
+        expectedGame.cells[0][2].currentRoundAction = CurrentRoundActionViewEnum.Place3; expectedGame.cells[0][2].canPlay = false;
+        expectedGame.cells[2][0].currentRoundAction = CurrentRoundActionViewEnum.Predict1; expectedGame.cells[2][0].canPlay = false;
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
 
@@ -123,11 +131,11 @@ describe('RefreshGameService', () => {
         simulateFirstPlayerRound();
         const expectedGame = gameViewModelInit();
         expectedGame.status = StatusViewEnum.WaitingOpponent;
-        expectedGame.cells[0][0].isPlayedInCurrentRound = true;
-        expectedGame.cells[0][1].isPlayedInCurrentRound = true;
-        expectedGame.cells[0][2].isPlayedInCurrentRound = true;
-        expectedGame.cells[2][0].isPlayedInCurrentRound = true;
-        expectedGame.cells[3][0].isPlayedInCurrentRound = true;
+        expectedGame.cells[0][0].currentRoundAction = CurrentRoundActionViewEnum.Place1;
+        expectedGame.cells[0][1].currentRoundAction = CurrentRoundActionViewEnum.Place2;
+        expectedGame.cells[0][2].currentRoundAction = CurrentRoundActionViewEnum.Place3;
+        expectedGame.cells[2][0].currentRoundAction = CurrentRoundActionViewEnum.Predict1;
+        expectedGame.cells[3][0].currentRoundAction = CurrentRoundActionViewEnum.Predict2;
         expectedGame.cells.forEach(row => row.forEach(cell => { cell.canPlay = false; }));
 
         expect(gameView.gameViewModel.get()).toEqual(gameViewModelInit());
@@ -230,19 +238,23 @@ describe('RefreshGameService', () => {
     });
 
     function simulateFirstPlayerRound() {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(3, 0)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(3, 0)),
+        ]);
     }
 
     function simulateFirstOpponentRound() {
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 3)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 2)));
+        fakeGameAdapter.addOpponentActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 3)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(0, 2)),
+        ]);
     }
 
     function updateFirstRound(expectedGame: GameViewModel) {
@@ -259,32 +271,40 @@ describe('RefreshGameService', () => {
     }
 
     function simulatePlayerWinGame() {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addPlayerActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
     }
 
     function simulateOpponentLoseGame() {
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addOpponentActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addOpponentActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
     }
 
@@ -308,32 +328,40 @@ describe('RefreshGameService', () => {
     }
 
     function simulatePlayerLoseGame() {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(1, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(2, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addPlayerActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
     }
 
     function simulateOpponentWinGame() {
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addOpponentActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addOpponentActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
     }
 
@@ -357,29 +385,37 @@ describe('RefreshGameService', () => {
     }
 
     function simulateNoWinnerGame() {
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(6, 7)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 6)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.playerActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addPlayerActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(6, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 6)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.playerActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addPlayerActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-        fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+        fakeGameAdapter.addOpponentActions([
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 7)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(7, 0)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+            new ActionDomainModel(1, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+        ]);
         for (let round = 2; round <= 10; round++) {
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)));
-            fakeGameAdapter.game.opponentActions.push(new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)));
+            fakeGameAdapter.addOpponentActions([
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 2)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 3)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(1, 1)),
+                new ActionDomainModel(round, ActionTypeDomainEnum.Predict, new PositionDomainModel(2, 2)),
+            ]);
         }
     }
 
@@ -418,7 +454,7 @@ const gameViewModelInit = (): GameViewModel => ({
             y,
             owner: OwnerViewEnum.None,
             canPlay: true,
-            isPlayedInCurrentRound: false,
+            currentRoundAction: CurrentRoundActionViewEnum.None,
             isInPlayerLargestTerritory: false,
             isInOpponentLargestTerritory: false,
         }))

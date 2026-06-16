@@ -1,10 +1,10 @@
-<main class="min-h-screen bg-zinc-950 flex flex-col items-center justify-center px-8 relative overflow-hidden">
+<main class="min-h-screen bg-zinc-950 flex flex-col items-center justify-center px-8 py-16 relative overflow-hidden">
 
   <div class="absolute inset-0 opacity-[0.04]"
     style="background-image: linear-gradient(rgba(255,255,255,1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,1) 1px, transparent 1px); background-size: 48px 48px;">
   </div>
 
-  <div class="relative z-10 flex flex-col items-center text-center">
+  <div class="relative z-10 flex flex-col items-center text-center w-full max-w-sm sm:max-w-lg mx-auto">
 
     <h1 class="text-6xl sm:text-8xl font-thin text-white uppercase flex items-center pl-[0.4em] mb-5">
       <span class="tracking-[0.4em]">L</span>
@@ -16,25 +16,85 @@
     <div class="w-8 h-px bg-zinc-600 mb-6"></div>
 
     <p class="text-zinc-400 text-[0.65rem] tracking-[0.2em] uppercase mb-14 whitespace-nowrap">
-      Stratégie · 1 contre 1
+      Stratégie · 1 contre 1 · 10 tours
     </p>
 
-    <div class="flex flex-col gap-6 mb-14 w-full max-w-xs">
-      <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined text-zinc-400 shrink-0"
-          style="font-size:1.1rem; font-variation-settings:'wght' 300">grid_4x4</span>
-        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">Placez et prédisez à chaque tour</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined text-zinc-400 shrink-0"
-          style="font-size:1.1rem; font-variation-settings:'wght' 300">select_all</span>
-        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">Construisez votre territoire</span>
-      </div>
-      <div class="flex items-center gap-4">
-        <span class="material-symbols-outlined text-zinc-400 shrink-0"
-          style="font-size:1.1rem; font-variation-settings:'wght' 300">military_tech</span>
-        <span class="text-zinc-300 text-xs tracking-[0.12em] uppercase text-left">La plus grande zone l'emporte</span>
-      </div>
+    <div class="w-full text-left mb-14 grid grid-cols-1 sm:grid-cols-2 gap-10">
+
+      <section>
+        <h2 class="text-[0.6rem] tracking-[0.25em] uppercase text-zinc-500 mb-4">Le principe</h2>
+        <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+          Chaque tour, les deux joueurs agissent <span class="text-white">simultanément</span> sans voir les choix de l'adversaire.
+          Vous placez des pions sur le plateau et tentez de prédire où l'adversaire placera les siens.
+        </p>
+      </section>
+
+      <section>
+        <h2 class="text-[0.6rem] tracking-[0.25em] uppercase text-zinc-500 mb-4">Déroulement d'un tour</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex gap-3 items-start">
+            <span class="text-[0.6rem] tracking-[0.15em] uppercase text-zinc-500 pt-px shrink-0 w-4">1</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Posez <span class="text-white">3 pions</span> sur des cases libres de votre choix.
+            </p>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="text-[0.6rem] tracking-[0.15em] uppercase text-zinc-500 pt-px shrink-0 w-4">2</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Faites <span class="text-white">2 prédictions</span> : désignez 2 cases où vous pensez que l'adversaire va poser ses pions.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-[0.6rem] tracking-[0.25em] uppercase text-zinc-500 mb-4">Résolution</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-zinc-500 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 400">close</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Si les deux joueurs posent un pion <span class="text-white">sur la même case</span>, la case reste neutre — personne ne la remporte.
+            </p>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-amber-500 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 400">swap_horiz</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Un pion placé sur une case <span class="text-white">correctement prédite</span> par l'adversaire lui revient — il vole votre case.
+            </p>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-emerald-500 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 400">check</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Vos pions <span class="text-white">non prédits</span> par l'adversaire et non en conflit restent sur le plateau — la case vous appartient.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section>
+        <h2 class="text-[0.6rem] tracking-[0.25em] uppercase text-zinc-500 mb-4">Victoire</h2>
+        <div class="flex flex-col gap-3">
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-zinc-400 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 300">grid_on</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Après <span class="text-white">10 tours</span>, chaque joueur possède un ensemble de cases. Les cases adjacentes forment des territoires.
+            </p>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-zinc-400 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 300">language</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Le plateau est <span class="text-white">toroïdal</span> — les bords gauche et droit se rejoignent, de même pour le haut et le bas.
+            </p>
+          </div>
+          <div class="flex gap-3 items-start">
+            <span class="material-symbols-outlined text-zinc-400 shrink-0" style="font-size:0.85rem; font-variation-settings:'wght' 300">military_tech</span>
+            <p class="text-zinc-300 text-xs leading-relaxed tracking-wide">
+              Le joueur avec le <span class="text-white">plus grand territoire</span> l'emporte.
+            </p>
+          </div>
+        </div>
+      </section>
+
     </div>
 
     <app-start-game></app-start-game>

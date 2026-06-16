@@ -16,8 +16,22 @@
       <img src="/opponent-token.svg" class="w-6 h-6" />
     }
     @default {
-      @if (cell().isPlayedInCurrentRound) {
-        <img src="/player-token.svg" class="w-6 h-6 opacity-25" />
+      @switch (cell().currentRoundAction) {
+        @case (CurrentRoundActionViewEnum.Place1) {
+          <div class="w-5 h-5 rounded-full border border-sky-500 flex items-center justify-center text-[0.5rem] leading-none text-sky-300">1</div>
+        }
+        @case (CurrentRoundActionViewEnum.Place2) {
+          <div class="w-5 h-5 rounded-full border border-sky-500 flex items-center justify-center text-[0.5rem] leading-none text-sky-300">2</div>
+        }
+        @case (CurrentRoundActionViewEnum.Place3) {
+          <div class="w-5 h-5 rounded-full border border-sky-500 flex items-center justify-center text-[0.5rem] leading-none text-sky-300">3</div>
+        }
+        @case (CurrentRoundActionViewEnum.Predict1) {
+          <div class="w-5 h-5 rounded-full border border-violet-500 flex items-center justify-center text-[0.5rem] leading-none text-violet-300">1</div>
+        }
+        @case (CurrentRoundActionViewEnum.Predict2) {
+          <div class="w-5 h-5 rounded-full border border-violet-500 flex items-center justify-center text-[0.5rem] leading-none text-violet-300">2</div>
+        }
       }
     }
   }

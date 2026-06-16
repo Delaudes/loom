@@ -1,7 +1,8 @@
 import { AppParam, AppPath } from "../../app/app.routes";
 import { SignalPort } from "../../signal/signal.port";
 import { UiPort } from "../../ui/ui.port";
-import { GameViewModel, OwnerViewEnum } from "../models/game.view.model";
+import { BOARD_SIZE } from "../models/game.domain.model";
+import { CurrentRoundActionViewEnum, GameViewModel, OwnerViewEnum } from "../models/game.view.model";
 
 export class GameView {
     constructor(public readonly gameViewModel: SignalPort<GameViewModel>, private readonly uiPort: UiPort) {
@@ -13,13 +14,13 @@ export class GameView {
             isErrorFetch: false,
             isErrorJoin: false,
             isErrorPlay: false,
-            cells: Array.from({ length: 8 }, (_, x) =>
-                Array.from({ length: 8 }, (_, y) => ({
+            cells: Array.from({ length: BOARD_SIZE }, (_, x) =>
+                Array.from({ length: BOARD_SIZE }, (_, y) => ({
                     x,
                     y,
                     owner: OwnerViewEnum.None,
                     canPlay: true,
-                    isPlayedInCurrentRound: false,
+                    currentRoundAction: CurrentRoundActionViewEnum.None,
                     isInPlayerLargestTerritory: false,
                     isInOpponentLargestTerritory: false
                 }))

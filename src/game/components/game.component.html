@@ -44,34 +44,24 @@
           }
         </div>
         <app-game-board></app-game-board>
-        <div class="flex items-center gap-6">
+        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
           <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-sm bg-zinc-600"></div>
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">
-              Votre zone — {{ gameView.gameViewModel.get().playerTerritorySize }}
-            </span>
+            <img src="/player-token.svg" class="w-4 h-4 shrink-0" />
+            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Vous — {{ gameView.gameViewModel.get().playerTerritorySize }}</span>
           </div>
           <div class="flex items-center gap-2">
-            <div class="w-3 h-3 rounded-sm bg-amber-900"></div>
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">
-              Zone adverse — {{ gameView.gameViewModel.get().opponentTerritorySize }}
-            </span>
+            <img src="/opponent-token.svg" class="w-4 h-4 shrink-0" />
+            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Adversaire — {{ gameView.gameViewModel.get().opponentTerritorySize }}</span>
           </div>
         </div>
         <div class="flex items-center gap-6">
           <div class="flex items-center gap-2">
-            <img src="/player-token.svg" class="w-4 h-4 shrink-0" />
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Vous</span>
+            <div class="w-4 h-4 rounded-full border border-sky-500 flex items-center justify-center text-[0.45rem] leading-none text-sky-300 shrink-0">1</div>
+            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Placement</span>
           </div>
           <div class="flex items-center gap-2">
-            <img src="/opponent-token.svg" class="w-4 h-4 shrink-0" />
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Adversaire</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <img src="/player-token.svg" class="w-4 h-4 shrink-0 opacity-25" />
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase"
-              >Joué ce tour</span
-            >
+            <div class="w-4 h-4 rounded-full border border-violet-500 flex items-center justify-center text-[0.45rem] leading-none text-violet-300 shrink-0">1</div>
+            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Prédiction</span>
           </div>
         </div>
       </div>

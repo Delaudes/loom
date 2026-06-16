@@ -1,234 +1,107 @@
 
-export class NewGameDomainModel {
-    constructor(
-        public readonly id: string,
-        public readonly playerId: string
-    ) { }
+export const BOARD_SIZE = 8;
+
+export enum ActionTypeDomainEnum {
+    Place = 'place',
+    Predict = 'predict'
 }
 
-export class GameDomainModel {
-    public readonly maxRound = 10;
-    private readonly maxActionPerRound = 5;
+export enum OwnerDomainEnum {
+    Player = 'player',
+    Opponent = 'opponent',
+    None = 'none'
+}
+
+export class PositionDomainModel {
     constructor(
-        public readonly playerActions: ActionDomainModel[],
-        public readonly opponentActions: ActionDomainModel[]
+        public readonly x: number,
+        public readonly y: number,
     ) { }
 
-    private getPlayerRoundActions(round: number): ActionDomainModel[] {
-        return this.playerActions.filter(action => action.hasRound(round));
-    }
-
-    private getOpponentRoundActions(round: number): ActionDomainModel[] {
-        return this.opponentActions.filter(action => action.hasRound(round));
-    }
-
-    private hasPlayerRoundComplete(round: number): boolean {
-        return this.getPlayerRoundActions(round).length >= this.maxActionPerRound;
-    }
-
-    private hasOpponentRoundComplete(round: number): boolean {
-        return this.getOpponentRoundActions(round).length >= this.maxActionPerRound;
-    }
-
-    private hasRoundComplete(round: number): boolean {
-        return this.hasPlayerRoundComplete(round) && this.hasOpponentRoundComplete(round);
-    }
-
-    get round(): number {
-        for (let round = 1; round <= this.maxRound; round++) {
-            if (!this.hasRoundComplete(round)) {
-                return round;
-            }
-        }
-        return 0;
-    }
-
-    isFinished(): boolean {
-        return this.round === 0
-    }
-
-    isWaitingForOpponent(): boolean {
-        return !this.isFinished() && this.nextPlayerAction === undefined;
-    }
-
-    isPlayerWin(): boolean {
-        return this.ownedPositions.isPlayerWin();
-    }
-
-    isOpponentWin(): boolean {
-        return this.ownedPositions.isOpponentWin();
-    }
-
-    get nextPlayerAction(): NextActionDomainModel | undefined {
-        const round = this.round
-        if (round === 0) {
-            return undefined
-        }
-        const playerRoundActions = this.getPlayerRoundActions(round);
-        if (playerRoundActions.length === 0) {
-            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 1);
-        }
-        const playerPlacements = playerRoundActions.filter(a => a.isPlacement());
-        if (playerPlacements.length === 1) {
-            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 2);
-        }
-        if (playerPlacements.length === 2) {
-            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 3);
-        }
-        const playerPredictions = playerRoundActions.filter(a => a.isPrediction());
-        if (playerPredictions.length === 0) {
-            return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 1);
-        }
-        if (playerPredictions.length === 1) {
-            return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 2);
-        }
-        return undefined;
-    }
-
-    get ownedPositions(): OwnedPositionsDomainModel {
-        const ownedPositions = new OwnedPositionsDomainModel([], []);
-        for (let round = 1; round <= this.maxRound; round++) {
-            if (!this.hasRoundComplete(round)) {
-                return ownedPositions;
-            }
-            const playerRoundActions = this.getPlayerRoundActions(round);
-            const opponentRoundActions = this.getOpponentRoundActions(round);
-            const playerPlacements = playerRoundActions.filter(a => a.isPlacement());
-            const playerPredictions = playerRoundActions.filter(a => a.isPrediction());
-            const opponentPlacements = opponentRoundActions.filter(a => a.isPlacement());
-            const opponentPredictions = opponentRoundActions.filter(a => a.isPrediction());
-            playerPlacements.forEach(placement => {
-                if (opponentPredictions.some(p => p.hasPosition(placement.position))) {
-                    ownedPositions.addOpponentOwnedPositions(placement.position);
-                } else if (!opponentPlacements.some(p => p.hasPosition(placement.position))) {
-                    ownedPositions.addPlayerOwnedPositions(placement.position);
-                }
-            });
-            opponentPlacements.forEach(placement => {
-                if (playerPredictions.some(p => p.hasPosition(placement.position))) {
-                    ownedPositions.addPlayerOwnedPositions(placement.position);
-                } else if (!playerPlacements.some(p => p.hasPosition(placement.position))) {
-                    ownedPositions.addOpponentOwnedPositions(placement.position);
-                }
-            });
-        }
-        return ownedPositions;
-    }
-
-    hasPlayedInCurrentRound(x: number, y: number): boolean {
-        return this.getPlayerRoundActions(this.round).some(action => action.isAt(x, y));
-    }
-
-    canPlayAt(x: number, y: number): boolean {
-        if (!this.nextPlayerAction) return false;
-        return this.ownedPositions.isUnowned(x, y) && !this.hasPlayedInCurrentRound(x, y);
+    isAt(x: number, y: number): boolean {
+        return this.x === x && this.y === y;
     }
 }
 
 export class ActionDomainModel {
+    public readonly isPlacement: boolean;
+    public readonly isPrediction: boolean;
+
     constructor(
         public readonly round: number,
         public readonly type: ActionTypeDomainEnum,
         public readonly position: PositionDomainModel
-    ) { }
+    ) {
+        this.isPlacement = type === ActionTypeDomainEnum.Place;
+        this.isPrediction = type === ActionTypeDomainEnum.Predict;
+    }
 
-    hasRound(round: number): boolean {
+    isInRound(round: number): boolean {
         return this.round === round;
     }
 
-    isPlacement(): boolean {
-        return this.type === ActionTypeDomainEnum.Place;
-    }
-
-    isPrediction(): boolean {
-        return this.type === ActionTypeDomainEnum.Predict;
-    }
-
-    hasPosition(position: PositionDomainModel): boolean {
-        return this.position.hasX(position.x) && this.position.hasY(position.y);
-    }
-
     isAt(x: number, y: number): boolean {
-        return this.position.hasX(x) && this.position.hasY(y);
+        return this.position.isAt(x, y);
     }
 }
 
 export class NextActionDomainModel {
+    public readonly isFirstPlaceAction: boolean;
+    public readonly isSecondPlaceAction: boolean;
+    public readonly isThirdPlaceAction: boolean;
+    public readonly isFirstPredictAction: boolean;
+    public readonly isSecondPredictAction: boolean;
+
     constructor(
         public readonly type: ActionTypeDomainEnum,
         public readonly number: number,
-    ) { }
-
-    private hasType(type: ActionTypeDomainEnum): boolean {
-        return this.type === type;
-    }
-
-    private hasNumber(number: number): boolean {
-        return this.number === number;
-    }
-
-    isFirstPlaceAction(): boolean {
-        return this.hasType(ActionTypeDomainEnum.Place) && this.hasNumber(1)
-    }
-
-    isSecondPlaceAction(): boolean {
-        return this.hasType(ActionTypeDomainEnum.Place) && this.hasNumber(2)
-    }
-
-    isThirdPlaceAction(): boolean {
-        return this.hasType(ActionTypeDomainEnum.Place) && this.hasNumber(3)
-    }
-
-    isFirstPredictAction(): boolean {
-        return this.hasType(ActionTypeDomainEnum.Predict) && this.hasNumber(1)
-    }
-
-    isSecondPredictAction(): boolean {
-        return this.hasType(ActionTypeDomainEnum.Predict) && this.hasNumber(2)
+    ) {
+        this.isFirstPlaceAction = type === ActionTypeDomainEnum.Place && number === 1;
+        this.isSecondPlaceAction = type === ActionTypeDomainEnum.Place && number === 2;
+        this.isThirdPlaceAction = type === ActionTypeDomainEnum.Place && number === 3;
+        this.isFirstPredictAction = type === ActionTypeDomainEnum.Predict && number === 1;
+        this.isSecondPredictAction = type === ActionTypeDomainEnum.Predict && number === 2;
     }
 }
 
 export class OwnedPositionsDomainModel {
-    private readonly height = 8
-    private readonly width = 8
+    private readonly height = BOARD_SIZE;
+    private readonly width = BOARD_SIZE;
+    private readonly largestPlayerTerritory: PositionDomainModel[];
+    private readonly largestOpponentTerritory: PositionDomainModel[];
+    public readonly playerTerritorySize: number;
+    public readonly opponentTerritorySize: number;
+    public readonly isPlayerWin: boolean;
+    public readonly isOpponentWin: boolean;
+
     constructor(
         public readonly playerOwnedPositions: PositionDomainModel[],
         public readonly opponentOwnedPositions: PositionDomainModel[]
-    ) { }
-
-    isPlayerWin(): boolean {
-        return this.largestPlayerTerritory.length > this.largestOpponentTerritory.length;
-    }
-
-    isOpponentWin(): boolean {
-        return this.largestOpponentTerritory.length > this.largestPlayerTerritory.length;
+    ) {
+        this.largestPlayerTerritory = this.largestTerritory(playerOwnedPositions);
+        this.largestOpponentTerritory = this.largestTerritory(opponentOwnedPositions);
+        this.playerTerritorySize = this.largestPlayerTerritory.length;
+        this.opponentTerritorySize = this.largestOpponentTerritory.length;
+        this.isPlayerWin = this.playerTerritorySize > this.opponentTerritorySize;
+        this.isOpponentWin = this.opponentTerritorySize > this.playerTerritorySize;
     }
 
     ownerAt(x: number, y: number): OwnerDomainEnum {
-        if (this.playerOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Player;
-        if (this.opponentOwnedPositions.some(p => p.hasX(x) && p.hasY(y))) return OwnerDomainEnum.Opponent;
+        if (this.playerOwnedPositions.some(p => p.isAt(x, y))) return OwnerDomainEnum.Player;
+        if (this.opponentOwnedPositions.some(p => p.isAt(x, y))) return OwnerDomainEnum.Opponent;
         return OwnerDomainEnum.None;
     }
 
     isUnowned(x: number, y: number): boolean {
-        return !this.playerOwnedPositions.some(p => p.hasX(x) && p.hasY(y))
-            && !this.opponentOwnedPositions.some(p => p.hasX(x) && p.hasY(y));
+        return this.ownerAt(x, y) === OwnerDomainEnum.None;
     }
 
-    addPlayerOwnedPositions(position: PositionDomainModel): void {
-        this.playerOwnedPositions.push(position);
+    isInPlayerLargestTerritory(x: number, y: number): boolean {
+        return this.largestPlayerTerritory.some(p => p.isAt(x, y));
     }
 
-    addOpponentOwnedPositions(position: PositionDomainModel): void {
-        this.opponentOwnedPositions.push(position);
-    }
-
-    get largestPlayerTerritory(): PositionDomainModel[] {
-        return this.largestTerritory(this.playerOwnedPositions);
-    }
-
-    get largestOpponentTerritory(): PositionDomainModel[] {
-        return this.largestTerritory(this.opponentOwnedPositions);
+    isInOpponentLargestTerritory(x: number, y: number): boolean {
+        return this.largestOpponentTerritory.some(p => p.isAt(x, y));
     }
 
     private largestTerritory(positions: PositionDomainModel[]): PositionDomainModel[] {
@@ -264,28 +137,117 @@ export class OwnedPositionsDomainModel {
     }
 }
 
-export class PositionDomainModel {
+export class GameDomainModel {
+    public readonly maxRound = 10;
+    private readonly maxActionPerRound = 5;
+    public readonly round: number;
+    public readonly currentRoundPlayerActions: ActionDomainModel[];
+    public readonly ownedPositions: OwnedPositionsDomainModel;
+    public readonly nextPlayerAction: NextActionDomainModel | undefined;
+    public readonly isFinished: boolean;
+    public readonly isWaitingForOpponent: boolean;
+    public readonly isPlayerWin: boolean;
+    public readonly isOpponentWin: boolean;
+
     constructor(
-        public readonly x: number,
-        public readonly y: number,
+        public readonly playerActions: ActionDomainModel[],
+        public readonly opponentActions: ActionDomainModel[]
+    ) {
+        this.round = this.computeRound();
+        this.currentRoundPlayerActions = this.actionsInRound(this.playerActions, this.round);
+        this.ownedPositions = this.computeOwnedPositions();
+        this.nextPlayerAction = this.computeNextPlayerAction();
+        this.isFinished = this.round === 0;
+        this.isWaitingForOpponent = !this.isFinished && this.nextPlayerAction === undefined;
+        this.isPlayerWin = this.ownedPositions.isPlayerWin;
+        this.isOpponentWin = this.ownedPositions.isOpponentWin;
+    }
+
+    private actionsInRound(actions: ActionDomainModel[], round: number): ActionDomainModel[] {
+        return actions.filter(a => a.isInRound(round));
+    }
+
+    private isRoundComplete(round: number): boolean {
+        return this.actionsInRound(this.playerActions, round).length >= this.maxActionPerRound
+            && this.actionsInRound(this.opponentActions, round).length >= this.maxActionPerRound;
+    }
+
+    private computeRound(): number {
+        for (let round = 1; round <= this.maxRound; round++) {
+            if (!this.isRoundComplete(round)) {
+                return round;
+            }
+        }
+        return 0;
+    }
+
+    private computeOwnedPositions(): OwnedPositionsDomainModel {
+        const playerOwned: PositionDomainModel[] = [];
+        const opponentOwned: PositionDomainModel[] = [];
+        for (let round = 1; round <= this.maxRound; round++) {
+            if (!this.isRoundComplete(round)) {
+                break;
+            }
+            const playerPlacements = this.actionsInRound(this.playerActions, round).filter(a => a.isPlacement);
+            const playerPredictions = this.actionsInRound(this.playerActions, round).filter(a => a.isPrediction);
+            const opponentPlacements = this.actionsInRound(this.opponentActions, round).filter(a => a.isPlacement);
+            const opponentPredictions = this.actionsInRound(this.opponentActions, round).filter(a => a.isPrediction);
+            playerPlacements.forEach(placement => {
+                if (opponentPredictions.some(p => p.isAt(placement.position.x, placement.position.y))) {
+                    opponentOwned.push(placement.position);
+                } else if (!opponentPlacements.some(p => p.isAt(placement.position.x, placement.position.y))) {
+                    playerOwned.push(placement.position);
+                }
+            });
+            opponentPlacements.forEach(placement => {
+                if (playerPredictions.some(p => p.isAt(placement.position.x, placement.position.y))) {
+                    playerOwned.push(placement.position);
+                } else if (!playerPlacements.some(p => p.isAt(placement.position.x, placement.position.y))) {
+                    opponentOwned.push(placement.position);
+                }
+            });
+        }
+        return new OwnedPositionsDomainModel(playerOwned, opponentOwned);
+    }
+
+    private computeNextPlayerAction(): NextActionDomainModel | undefined {
+        if (this.round === 0) {
+            return undefined;
+        }
+        const actions = this.currentRoundPlayerActions;
+        if (actions.length === 0) {
+            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 1);
+        }
+        const placements = actions.filter(a => a.isPlacement);
+        if (placements.length === 1) {
+            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 2);
+        }
+        if (placements.length === 2) {
+            return new NextActionDomainModel(ActionTypeDomainEnum.Place, 3);
+        }
+        const predictions = actions.filter(a => a.isPrediction);
+        if (predictions.length === 0) {
+            return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 1);
+        }
+        if (predictions.length === 1) {
+            return new NextActionDomainModel(ActionTypeDomainEnum.Predict, 2);
+        }
+        return undefined;
+    }
+
+    hasPlayedInCurrentRound(x: number, y: number): boolean {
+        return this.currentRoundPlayerActions.some(a => a.isAt(x, y));
+    }
+
+    canPlayAt(x: number, y: number): boolean {
+        if (!this.nextPlayerAction) return false;
+        return this.ownedPositions.isUnowned(x, y) && !this.hasPlayedInCurrentRound(x, y);
+    }
+}
+
+export class NewGameDomainModel {
+    constructor(
+        public readonly id: string,
+        public readonly playerId: string
     ) { }
-
-    hasX(x: number): boolean {
-        return this.x === x;
-    }
-
-    hasY(y: number): boolean {
-        return this.y === y;
-    }
-}
-
-export enum OwnerDomainEnum {
-    Player = 'player',
-    Opponent = 'opponent',
-    None = 'none'
-}
-
-export enum ActionTypeDomainEnum {
-    Place = 'place',
-    Predict = 'predict'
 }

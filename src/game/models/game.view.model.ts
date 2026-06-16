@@ -18,7 +18,7 @@ export type CellViewModel = {
     y: number;
     owner: OwnerViewEnum;
     canPlay: boolean;
-    isPlayedInCurrentRound: boolean;
+    currentRoundAction: CurrentRoundActionViewEnum;
     isInPlayerLargestTerritory: boolean;
     isInOpponentLargestTerritory: boolean;
 }
@@ -33,6 +33,15 @@ export enum StatusViewEnum {
     Win = "Victoire",
     Lost = "Défaite",
     NoWinner = "Égalité"
+}
+
+export enum CurrentRoundActionViewEnum {
+    None = 'none',
+    Place1 = 'place1',
+    Place2 = 'place2',
+    Place3 = 'place3',
+    Predict1 = 'predict1',
+    Predict2 = 'predict2',
 }
 
 export enum OwnerViewEnum {
