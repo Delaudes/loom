@@ -10,11 +10,11 @@ export class AngularHttpAdapter implements HttpPort {
         return firstValueFrom(this.httpClient.get<T>(url));
     }
 
-    post<T>(url: string, body: any): Promise<T> {
+    post<T>(url: string, body: unknown): Promise<T> {
         return firstValueFrom(this.httpClient.post<T>(url, body));
     }
 
-    put<T>(url: string, body: any): Promise<T> {
+    put<T>(url: string, body: unknown): Promise<T> {
         return firstValueFrom(this.httpClient.put<T>(url, body));
     }
 

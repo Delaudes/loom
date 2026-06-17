@@ -2,15 +2,15 @@ import { HttpPort } from "./http.port";
 
 export class FakeHttpAdapter implements HttpPort {
     getResponse?: any;
-    postResponse?: any;
-    putResponse?: any;
-    deleteResponse?: any;
+    postResponse?: unknown;
+    putResponse?: unknown;
+    deleteResponse?: unknown;
 
     lastGetUrl?: string;
     lastPostUrl?: string;
-    lastPostBody?: any;
+    lastPostBody?: unknown;
     lastPutUrl?: string;
-    lastPutBody?: any;
+    lastPutBody?: unknown;
     lastDeleteUrl?: string;
 
     get<T>(url: string): Promise<T> {
@@ -18,13 +18,13 @@ export class FakeHttpAdapter implements HttpPort {
         return Promise.resolve(this.getResponse as T);
     }
 
-    post<T>(url: string, body: any): Promise<T> {
+    post<T>(url: string, body: unknown): Promise<T> {
         this.lastPostUrl = url;
         this.lastPostBody = body;
         return Promise.resolve(this.postResponse as T);
     }
 
-    put<T>(url: string, body: any): Promise<T> {
+    put<T>(url: string, body: unknown): Promise<T> {
         this.lastPutUrl = url;
         this.lastPutBody = body;
         return Promise.resolve(this.putResponse as T);
