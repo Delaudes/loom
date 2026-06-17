@@ -11,9 +11,9 @@
 
   <app-header-game></app-header-game>
 
-  <div class="w-full h-px bg-zinc-900 relative z-10"></div>
+  <div class="hidden sm:block w-full h-px bg-zinc-900 relative z-10"></div>
 
-  <main class="relative z-10 flex flex-1 items-center justify-center p-6">
+  <main class="relative z-10 flex flex-1 items-center justify-center px-6 pt-6 pb-24 sm:p-6">
     @if (gameView.gameViewModel.get().isLoadingFetch) {
       <div class="w-5 h-5 border border-zinc-600 border-t-zinc-300 rounded-full animate-spin"></div>
     } @else if (gameView.gameViewModel.get().isErrorFetch) {
@@ -29,8 +29,32 @@
         </p>
       </div>
     } @else {
-      <div class="flex flex-col items-center gap-6">
-        <div class="flex flex-col items-center gap-2">
+      <div class="flex flex-col items-center gap-6 w-full">
+
+        <div class="order-1 sm:order-3 flex flex-col items-center gap-2">
+          <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
+            <div class="flex items-center gap-2">
+              <img src="/player-token.svg" class="w-4 h-4 shrink-0" />
+              <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Vous — {{ gameView.gameViewModel.get().playerTerritorySize }}</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <img src="/opponent-token.svg" class="w-4 h-4 shrink-0" />
+              <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Adversaire — {{ gameView.gameViewModel.get().opponentTerritorySize }}</span>
+            </div>
+          </div>
+          <div class="flex items-center gap-6">
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 rounded-full border border-sky-500 flex items-center justify-center text-[0.45rem] leading-none text-sky-300 shrink-0">1</div>
+              <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Placement</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="w-4 h-4 rounded-full border border-violet-500 flex items-center justify-center text-[0.45rem] leading-none text-violet-300 shrink-0">1</div>
+              <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Prédiction</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="order-2 sm:order-1 flex flex-col items-center gap-2">
           <p class="text-[0.65rem] tracking-[0.2em] text-zinc-600 uppercase">
             Tour {{ gameView.gameViewModel.get().round }}
           </p>
@@ -43,27 +67,9 @@
             </p>
           }
         </div>
-        <app-game-board></app-game-board>
-        <div class="flex flex-wrap items-center justify-center gap-x-6 gap-y-2">
-          <div class="flex items-center gap-2">
-            <img src="/player-token.svg" class="w-4 h-4 shrink-0" />
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Vous — {{ gameView.gameViewModel.get().playerTerritorySize }}</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <img src="/opponent-token.svg" class="w-4 h-4 shrink-0" />
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Adversaire — {{ gameView.gameViewModel.get().opponentTerritorySize }}</span>
-          </div>
-        </div>
-        <div class="flex items-center gap-6">
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded-full border border-sky-500 flex items-center justify-center text-[0.45rem] leading-none text-sky-300 shrink-0">1</div>
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Placement</span>
-          </div>
-          <div class="flex items-center gap-2">
-            <div class="w-4 h-4 rounded-full border border-violet-500 flex items-center justify-center text-[0.45rem] leading-none text-violet-300 shrink-0">1</div>
-            <span class="text-[0.6rem] tracking-[0.15em] text-zinc-500 uppercase">Prédiction</span>
-          </div>
-        </div>
+
+        <app-game-board class="order-3 sm:order-2"></app-game-board>
+
       </div>
     }
   </main>
