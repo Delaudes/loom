@@ -117,6 +117,18 @@ describe('PlayCellUseCase', () => {
         expect(gameView.gameViewModel.get().isErrorPlay).toBe(false);
     });
 
+    it('should clear error on success after a refresh failure', async () => {
+        fakeRefreshGameService.error = new Error();
+        await playCellUseCase.execute(0, 0);
+
+        expect(gameView.gameViewModel.get().isErrorPlay).toBe(true);
+
+        fakeRefreshGameService.error = undefined;
+        await playCellUseCase.execute(0, 0);
+
+        expect(gameView.gameViewModel.get().isErrorPlay).toBe(false);
+    });
+
     it('should call refresh service after successful play', async () => {
         expect(fakeRefreshGameService.executeCallCount).toBe(0);
 

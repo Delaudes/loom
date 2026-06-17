@@ -10,10 +10,11 @@ describe('FetchGameUseCase', () => {
     let fetchGameUseCase: FetchGameUseCase;
     let fakeRefreshGameService: FakeRefreshGameService;
     let fakeTimerAdapter: FakeTimerAdapter;
+    let fakeUiAdapter: FakeUiAdapter;
     let gameView: GameView;
 
     beforeEach(() => {
-        const fakeUiAdapter = new FakeUiAdapter();
+        fakeUiAdapter = new FakeUiAdapter();
         gameView = new GameView(new FakeSignalAdapter<GameViewModel>(), fakeUiAdapter);
         fakeTimerAdapter = new FakeTimerAdapter();
         fakeRefreshGameService = new FakeRefreshGameService();

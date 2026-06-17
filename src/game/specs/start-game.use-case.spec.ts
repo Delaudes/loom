@@ -33,7 +33,7 @@ describe('StartGameUseCase', () => {
     });
 
     it('should display error if game creation fails', async () => {
-        fakeGameAdapter.error = new Error();
+        fakeGameAdapter.createError = new Error();
 
         expect(gameView.gameViewModel.get().isErrorCreate).toBe(false);
 
@@ -55,7 +55,7 @@ describe('StartGameUseCase', () => {
     });
 
     it('should display loading during game creation failure', async () => {
-        fakeGameAdapter.error = new Error();
+        fakeGameAdapter.createError = new Error();
 
         expect(gameView.gameViewModel.get().isLoadingCreate).toBe(false);
 

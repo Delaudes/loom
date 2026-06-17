@@ -2,13 +2,14 @@ import { GamePort } from "../core/game.port";
 import { ActionDomainModel, CellDomainModel, GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
 
 export class FakeGameAdapter implements GamePort {
-    error?: unknown;
+    createError?: unknown;
+    joinError?: unknown;
     fetchError?: unknown;
     playError?: unknown;
 
     newGame = new NewGameDomainModel('gameId', 'playerId');
     async createGame(): Promise<NewGameDomainModel> {
-        if (this.error) throw this.error;
+        if (this.createError) throw this.createError;
         return this.newGame;
     }
 
@@ -27,7 +28,7 @@ export class FakeGameAdapter implements GamePort {
     newGameJoined = new NewGameDomainModel('gameId', 'opponentId');
     joinedGameId?: string;
     async joinGame(gameId: string): Promise<NewGameDomainModel> {
-        if (this.error) throw this.error;
+        if (this.joinError) throw this.joinError;
         this.joinedGameId = gameId;
         return this.newGameJoined;
     }

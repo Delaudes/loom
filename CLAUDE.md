@@ -63,7 +63,9 @@ Example: `SignalPort<T>` → `AngularSignalAdapter` / `FakeSignalAdapter`
   2. **Assert initial** — verify the state before the action
   3. **Act** — call `execute()` or the method under test
   4. **Assert final** — verify the state after the action
-- The initial assert uses a fresh reference (e.g. `gameViewModelInit()`) so mutations to the expected object don't affect it
+- The initial assert uses a fresh reference (e.g. `gameViewModelInit()`) so mutations to the expected object don't affect it; this factory helper lives **inside** the `describe` block
+- **What to test in `*.view.spec.ts`**: only the methods called directly by components (e.g. `shareGame()`); methods used by use cases are covered transitively through use case tests
+- **Domain model tests**: domain logic is not tested file-by-file — it is covered by use case specs that exercise it from the outside. This allows safe refactoring of internals as long as observable behaviour is preserved
 
 ### File naming
 ```

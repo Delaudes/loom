@@ -237,6 +237,14 @@ describe('RefreshGameService', () => {
         expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
     });
 
+    it('should throw if refetch triggered by timer fails', async () => {
+        simulateFirstPlayerRound();
+        await refreshGameService.execute();
+
+        fakeGameAdapter.fetchError = new Error();
+        await expect(fakeTimerAdapter.trigger()).rejects.toThrow();
+    });
+
     function simulateFirstPlayerRound() {
         fakeGameAdapter.addPlayerActions([
             new ActionDomainModel(1, ActionTypeDomainEnum.Place, new PositionDomainModel(0, 0)),
@@ -438,28 +446,30 @@ describe('RefreshGameService', () => {
         expectedGame.cells[0][7].isInOpponentLargestTerritory = true;
         expectedGame.cells[7][0].isInOpponentLargestTerritory = true;
     }
-});
 
-const gameViewModelInit = (): GameViewModel => ({
-    isLoadingCreate: false,
-    isLoadingFetch: false,
-    isLoadingJoin: false,
-    isErrorCreate: false,
-    isErrorFetch: false,
-    isErrorJoin: false,
-    isErrorPlay: false,
-    cells: Array.from({ length: 8 }, (_, x) =>
-        Array.from({ length: 8 }, (_, y) => ({
-            x,
-            y,
-            owner: OwnerViewEnum.None,
-            canPlay: true,
-            currentRoundAction: CurrentRoundActionViewEnum.None,
-            isInPlayerLargestTerritory: false,
-            isInOpponentLargestTerritory: false,
-        }))
-    ),
-    round: '1/10',
-    playerTerritorySize: 0,
-    opponentTerritorySize: 0,
+    function gameViewModelInit(): GameViewModel {
+        return {
+            isLoadingCreate: false,
+            isLoadingFetch: false,
+            isLoadingJoin: false,
+            isErrorCreate: false,
+            isErrorFetch: false,
+            isErrorJoin: false,
+            isErrorPlay: false,
+            cells: Array.from({ length: 8 }, (_, x) =>
+                Array.from({ length: 8 }, (_, y) => ({
+                    x,
+                    y,
+                    owner: OwnerViewEnum.None,
+                    canPlay: true,
+                    currentRoundAction: CurrentRoundActionViewEnum.None,
+                    isInPlayerLargestTerritory: false,
+                    isInOpponentLargestTerritory: false,
+                }))
+            ),
+            round: '1/10',
+            playerTerritorySize: 0,
+            opponentTerritorySize: 0,
+        };
+    }
 });

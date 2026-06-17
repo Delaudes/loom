@@ -44,7 +44,7 @@ describe('JoinGameUseCase', () => {
     });
 
     it('should display error if game join fails', async () => {
-        fakeGameAdapter.error = new Error();
+        fakeGameAdapter.joinError = new Error();
 
         expect(gameView.gameViewModel.get().isErrorJoin).toBe(false);
 
@@ -66,7 +66,7 @@ describe('JoinGameUseCase', () => {
     });
 
     it('should display loading during game join failure', async () => {
-        fakeGameAdapter.error = new Error();
+        fakeGameAdapter.joinError = new Error();
 
         expect(gameView.gameViewModel.get().isLoadingJoin).toBe(false);
 
