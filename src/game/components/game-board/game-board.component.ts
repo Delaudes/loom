@@ -31,6 +31,14 @@ export class GameBoardComponent {
     this.animated.set(false);
   }
 
+  protected get colLabels(): string[] {
+    return this.shiftedCells[0].map(cell => String.fromCharCode(65 + cell.y));
+  }
+
+  protected get rowLabels(): number[] {
+    return this.shiftedCells.map(row => row[0].x + 1);
+  }
+
   protected get shiftedCells() {
     const cells = this.gameView.gameViewModel.get().cells;
     const ro = this.rowOffset.get();
