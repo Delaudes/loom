@@ -1,8 +1,8 @@
 import { InjectionToken } from "@angular/core";
-import { AngularHttpWrapper } from "./angular-http.wrapper";
+import { AngularHttpAdapter } from "./angular-http.adapter";
 import { HttpPort } from "./http.port";
 
 export const HTTP_TOKEN = new InjectionToken<HttpPort>('HTTP_TOKEN', {
     providedIn: 'root',
-    factory: () => new AngularHttpWrapper()
+    factory: () => new AngularHttpAdapter()
 });

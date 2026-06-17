@@ -1,6 +1,5 @@
 import { GamePort } from "../core/game.port";
-import { CellApiModel } from "../models/game.api.model";
-import { ActionDomainModel, GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
+import { ActionDomainModel, CellDomainModel, GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
 
 export class FakeGameAdapter implements GamePort {
     error?: unknown;
@@ -33,8 +32,8 @@ export class FakeGameAdapter implements GamePort {
         return this.newGameJoined;
     }
 
-    cell?: CellApiModel;
-    async playCell(cell: CellApiModel): Promise<void> {
+    cell?: CellDomainModel;
+    async playCell(cell: CellDomainModel): Promise<void> {
         if (this.playError) throw this.playError;
         this.cell = cell;
     }

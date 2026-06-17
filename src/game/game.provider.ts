@@ -1,5 +1,5 @@
 import { InjectionToken } from "@angular/core";
-import { AngularSignalWrapper } from "../signal/angular-signal.wrapper";
+import { AngularSignalAdapter } from "../signal/angular-signal.adapter";
 import { TIMER_TOKEN } from "../timer/timer.provider";
 import { UiPort } from "../ui/ui.port";
 import { UI_TOKEN } from "../ui/ui.provider";
@@ -42,7 +42,7 @@ export const GAME_PROVIDERS = [
     },
     {
         provide: GameView,
-        useFactory: (uiPort: UiPort) => new GameView(new AngularSignalWrapper<GameViewModel>(), uiPort),
+        useFactory: (uiPort: UiPort) => new GameView(new AngularSignalAdapter<GameViewModel>(), uiPort),
         deps: [UI_TOKEN],
     }
 ];

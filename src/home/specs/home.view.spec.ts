@@ -1,19 +1,19 @@
 import { AppPath } from "../../app/app.routes";
-import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
+import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { HomeView } from "../core/home.view";
 
 describe('HomeView', () => {
     let homeView: HomeView;
-    let fakeUiWrapper: FakeUiWrapper;
+    let fakeUiAdapter: FakeUiAdapter;
 
     beforeEach(() => {
-        fakeUiWrapper = new FakeUiWrapper();
-        homeView = new HomeView(fakeUiWrapper);
+        fakeUiAdapter = new FakeUiAdapter();
+        homeView = new HomeView(fakeUiAdapter);
     });
 
     it('should navigate to home', () => {
-        expect(fakeUiWrapper.path).toBeUndefined();
+        expect(fakeUiAdapter.path).toBeUndefined();
         homeView.navigateToHome();
-        expect(fakeUiWrapper.path).toBe(AppPath.Home);
+        expect(fakeUiAdapter.path).toBe(AppPath.Home);
     });
 });

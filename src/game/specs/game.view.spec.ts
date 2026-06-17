@@ -1,28 +1,28 @@
 import { AppParam, AppPath } from "../../app/app.routes";
-import { FakeSignalWrapper } from "../../signal/fake-signal.wrapper";
-import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
+import { FakeSignalAdapter } from "../../signal/fake-signal.adapter";
+import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { GameView } from "../core/game.view";
 import { GameViewModel } from "../models/game.view.model";
 
 describe('GameView', () => {
     let gameView: GameView;
-    let fakeUiWrapper: FakeUiWrapper;
+    let fakeUiAdapter: FakeUiAdapter;
 
     beforeEach(() => {
-        fakeUiWrapper = new FakeUiWrapper();
-        gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
+        fakeUiAdapter = new FakeUiAdapter();
+        gameView = new GameView(new FakeSignalAdapter<GameViewModel>(), fakeUiAdapter);
     });
 
     it('should share game', () => {
         const gameId = 'gameId';
-        fakeUiWrapper.params[AppParam.GameId] = gameId;
+        fakeUiAdapter.params[AppParam.GameId] = gameId;
 
-        expect(fakeUiWrapper.shareText).toBeUndefined();
-        expect(fakeUiWrapper.sharePath).toBeUndefined();
+        expect(fakeUiAdapter.shareText).toBeUndefined();
+        expect(fakeUiAdapter.sharePath).toBeUndefined();
 
         gameView.shareGame();
 
-        expect(fakeUiWrapper.shareText).toEqual(`Viens me défier sur LOOM !\n`);
-        expect(fakeUiWrapper.sharePath).toEqual(AppPath.Games + '/' + gameId);
+        expect(fakeUiAdapter.shareText).toEqual(`Viens me défier sur LOOM !\n`);
+        expect(fakeUiAdapter.sharePath).toEqual(AppPath.Games + '/' + gameId);
     });
 });

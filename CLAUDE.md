@@ -28,20 +28,21 @@ Domain Models → Use Cases → View → Components
 | View | `*.view.ts` | Bridges use cases ↔ components, holds signal state |
 | View Models | `*.view.model.ts` | UI-shaped data (enums, typed state) |
 | Ports | `*.port.ts` | Interfaces abstracting infrastructure |
-| Adapters | `angular-*.ts` / `in-memory-*.ts` | Concrete implementations |
-| Fakes | `fake-*.ts` | Test doubles for ports |
-| Providers | `*.provider.ts` | Angular InjectionToken + factory |
+| Adapters | `angular-*.adapter.ts` / `in-memory-*.adapter.ts` | Concrete implementations |
+| Fakes | `fake-*.adapter.ts` | Test doubles for ports |
+| Services | `*.service.ts` | Multi-step orchestration implementing a port (not a one-shot use case) |
+| Providers | `*.provider.ts` | Angular `InjectionToken` + factory; token names in `SCREAMING_SNAKE_CASE` |
 
 ---
 
 ## Conventions
 
 ### Ports & Adapters
-Every infrastructure concern has a **port** (interface) + two adapters:
-- `angular-*.wrapper.ts` — real Angular implementation
-- `fake-*.wrapper.ts` — in-memory test double
+Every infrastructure concern has a **port** (interface `*.port.ts`) + two adapters:
+- `angular-*.adapter.ts` — real Angular implementation
+- `fake-*.adapter.ts` — in-memory test double
 
-Example: `SignalPort<T>` → `AngularSignalWrapper` / `FakeSignalWrapper`
+Example: `SignalPort<T>` → `AngularSignalAdapter` / `FakeSignalAdapter`
 
 ### Use Cases
 - Constructor receives ports and views via injection

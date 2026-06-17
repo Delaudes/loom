@@ -1,6 +1,5 @@
 import { GamePort } from "./core/game.port";
-import { CellApiModel } from "./models/game.api.model";
-import { ActionDomainModel, ActionTypeDomainEnum, GameDomainModel, NewGameDomainModel, PositionDomainModel } from "./models/game.domain.model";
+import { ActionDomainModel, ActionTypeDomainEnum, CellDomainModel, GameDomainModel, NewGameDomainModel, PositionDomainModel } from "./models/game.domain.model";
 
 interface StoredAction {
     playerId: string;
@@ -65,7 +64,7 @@ export class LocalStorageGameAdapter implements GamePort {
         return new NewGameDomainModel(gameId, player2Id);
     }
 
-    async playCell(cell: CellApiModel): Promise<void> {
+    async playCell(cell: CellDomainModel): Promise<void> {
         const stored = this.read(cell.gameId);
         const game = await this.fetchGame(cell.gameId, cell.playerId);
         const nextAction = game.nextPlayerAction;

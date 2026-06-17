@@ -1,6 +1,6 @@
 import { TimerPort } from "./timer.port";
 
-export class AngularTimerWrapper implements TimerPort {
+export class AngularTimerAdapter implements TimerPort {
     private currentTimeout?: ReturnType<typeof setTimeout>;
 
     scheduleOnce(callback: () => void, ms: number): void {

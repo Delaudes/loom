@@ -1,6 +1,6 @@
-import { FakeSignalWrapper } from "../../signal/fake-signal.wrapper";
-import { FakeTimerWrapper } from "../../timer/fake-timer.wrapper";
-import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
+import { FakeSignalAdapter } from "../../signal/fake-signal.adapter";
+import { FakeTimerAdapter } from "../../timer/fake-timer.adapter";
+import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { FetchGameUseCase } from "../core/fetch-game.use-case";
 import { GameView } from "../core/game.view";
 import { GameViewModel } from "../models/game.view.model";
@@ -9,27 +9,27 @@ import { FakeRefreshGameService } from "./fake-refresh-game.service";
 describe('FetchGameUseCase', () => {
     let fetchGameUseCase: FetchGameUseCase;
     let fakeRefreshGameService: FakeRefreshGameService;
-    let fakeTimerWrapper: FakeTimerWrapper;
+    let fakeTimerAdapter: FakeTimerAdapter;
     let gameView: GameView;
 
     beforeEach(() => {
-        const fakeUiWrapper = new FakeUiWrapper();
-        gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
-        fakeTimerWrapper = new FakeTimerWrapper();
+        const fakeUiAdapter = new FakeUiAdapter();
+        gameView = new GameView(new FakeSignalAdapter<GameViewModel>(), fakeUiAdapter);
+        fakeTimerAdapter = new FakeTimerAdapter();
         fakeRefreshGameService = new FakeRefreshGameService();
-        fetchGameUseCase = new FetchGameUseCase(gameView, fakeTimerWrapper, fakeRefreshGameService);
+        fetchGameUseCase = new FetchGameUseCase(gameView, fakeTimerAdapter, fakeRefreshGameService);
     });
 
     it('should cancel any pending refetch at the start of execute', async () => {
-        expect(fakeTimerWrapper.cancelCallCount).toBe(0);
+        expect(fakeTimerAdapter.cancelCallCount).toBe(0);
 
         await fetchGameUseCase.execute();
 
-        expect(fakeTimerWrapper.cancelCallCount).toBe(1);
+        expect(fakeTimerAdapter.cancelCallCount).toBe(1);
 
         await fetchGameUseCase.execute();
 
-        expect(fakeTimerWrapper.cancelCallCount).toBe(2);
+        expect(fakeTimerAdapter.cancelCallCount).toBe(2);
     });
 
     it('should display loading during game fetching', async () => {

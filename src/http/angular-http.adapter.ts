@@ -3,7 +3,7 @@ import { inject } from "@angular/core";
 import { firstValueFrom } from "rxjs";
 import { HttpPort } from "./http.port";
 
-export class AngularHttpWrapper implements HttpPort {
+export class AngularHttpAdapter implements HttpPort {
     private readonly httpClient = inject(HttpClient);
 
     get<T>(url: string): Promise<T> {

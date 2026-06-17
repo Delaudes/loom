@@ -1,4 +1,4 @@
-import { CellApiModel } from "../models/game.api.model";
+import { CellDomainModel } from "../models/game.domain.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
 import { RefreshGamePort } from "./refresh-game.port";
@@ -17,12 +17,8 @@ export class PlayCellUseCase {
         if (cell?.canPlay) {
             this.gameView.update({ isLoadingFetch: true });
             try {
-                await this.gamePort.playCell({
-                    x,
-                    y,
-                    gameId,
-                    playerId,
-                } satisfies CellApiModel);
+                const cellDomainModel = new CellDomainModel(x, y, gameId, playerId);
+                await this.gamePort.playCell(cellDomainModel);
                 await this.refreshGameService.execute();
                 this.gameView.update({ isErrorPlay: false });
             } catch (error) {

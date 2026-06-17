@@ -251,3 +251,13 @@ export class NewGameDomainModel {
         public readonly playerId: string
     ) { }
 }
+
+export class CellDomainModel {
+    constructor(
+        public readonly x: number,
+        public readonly y: number,
+        public readonly gameId: string,
+        public readonly playerId: string
+    ) { }
+};
+

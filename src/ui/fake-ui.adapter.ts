@@ -1,6 +1,6 @@
 import { UiPort } from "./ui.port";
 
-export class FakeUiWrapper implements UiPort {
+export class FakeUiAdapter implements UiPort {
     path?: string
     params: Record<string, string> = {};
     shareText?: string;

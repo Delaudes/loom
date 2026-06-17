@@ -1,7 +1,7 @@
 import { signal } from "@angular/core";
 import { SignalPort } from "./signal.port";
 
-export class AngularSignalWrapper<T> implements SignalPort<T> {
+export class AngularSignalAdapter<T> implements SignalPort<T> {
     private readonly signal = signal<T>(undefined as T)
 
     get(): T {

@@ -1,6 +1,6 @@
 import { HttpPort } from "./http.port";
 
-export class FakeHttpWrapper implements HttpPort {
+export class FakeHttpAdapter implements HttpPort {
     getResponse?: any;
     postResponse?: any;
     putResponse?: any;

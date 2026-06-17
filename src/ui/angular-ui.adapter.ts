@@ -2,7 +2,7 @@ import { inject } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 import { UiPort } from "./ui.port";
 
-export class AngularUiWrapper implements UiPort {
+export class AngularUiAdapter implements UiPort {
     private readonly router = inject(Router);
     private readonly activatedRoute = inject(ActivatedRoute);
 

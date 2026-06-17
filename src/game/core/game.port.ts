@@ -1,9 +1,8 @@
-import { CellApiModel } from "../models/game.api.model";
-import { GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
+import { CellDomainModel, GameDomainModel, NewGameDomainModel } from "../models/game.domain.model";
 
 export interface GamePort {
     createGame(): Promise<NewGameDomainModel>;
     fetchGame(gameId: string, playerId: string): Promise<GameDomainModel>;
     joinGame(gameId: string): Promise<NewGameDomainModel>;
-    playCell(cell: CellApiModel): Promise<void>;
+    playCell(cell: CellDomainModel): Promise<void>;
 }

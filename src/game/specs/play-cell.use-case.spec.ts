@@ -1,6 +1,6 @@
 import { AppParam } from "../../app/app.routes";
-import { FakeSignalWrapper } from "../../signal/fake-signal.wrapper";
-import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
+import { FakeSignalAdapter } from "../../signal/fake-signal.adapter";
+import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { GameView } from "../core/game.view";
 import { PlayCellUseCase } from "../core/play-cell.use-case";
 import { GameViewModel } from "../models/game.view.model";
@@ -12,13 +12,13 @@ describe('PlayCellUseCase', () => {
     let fakeGameAdapter: FakeGameAdapter;
     let fakeRefreshGameService: FakeRefreshGameService;
     let gameView: GameView;
-    let fakeUiWrapper: FakeUiWrapper;
+    let fakeUiAdapter: FakeUiAdapter;
 
     beforeEach(() => {
-        fakeUiWrapper = new FakeUiWrapper();
-        fakeUiWrapper.params[AppParam.GameId] = 'gameId';
-        fakeUiWrapper.params[AppParam.PlayerId] = 'playerId';
-        gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
+        fakeUiAdapter = new FakeUiAdapter();
+        fakeUiAdapter.params[AppParam.GameId] = 'gameId';
+        fakeUiAdapter.params[AppParam.PlayerId] = 'playerId';
+        gameView = new GameView(new FakeSignalAdapter<GameViewModel>(), fakeUiAdapter);
         fakeGameAdapter = new FakeGameAdapter();
         fakeRefreshGameService = new FakeRefreshGameService();
         playCellUseCase = new PlayCellUseCase(gameView, fakeGameAdapter, fakeRefreshGameService);
@@ -29,7 +29,7 @@ describe('PlayCellUseCase', () => {
 
         await playCellUseCase.execute(3, 5);
 
-        expect(fakeGameAdapter.cell).toEqual({ x: 3, y: 5, gameId: fakeUiWrapper.getParam(AppParam.GameId), playerId: fakeUiWrapper.getParam(AppParam.PlayerId) });
+        expect(fakeGameAdapter.cell).toEqual({ x: 3, y: 5, gameId: fakeUiAdapter.getParam(AppParam.GameId), playerId: fakeUiAdapter.getParam(AppParam.PlayerId) });
     });
 
     it('should not play if cell cannot be played', async () => {

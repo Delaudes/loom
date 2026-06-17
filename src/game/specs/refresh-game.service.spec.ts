@@ -1,7 +1,7 @@
 import { AppParam } from "../../app/app.routes";
-import { FakeSignalWrapper } from "../../signal/fake-signal.wrapper";
-import { FakeTimerWrapper } from "../../timer/fake-timer.wrapper";
-import { FakeUiWrapper } from "../../ui/fake-ui.wrapper";
+import { FakeSignalAdapter } from "../../signal/fake-signal.adapter";
+import { FakeTimerAdapter } from "../../timer/fake-timer.adapter";
+import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { GameView } from "../core/game.view";
 import { RefreshGameService } from "../core/refresh-game.service";
 import { ActionDomainModel, ActionTypeDomainEnum, PositionDomainModel } from "../models/game.domain.model";
@@ -11,23 +11,23 @@ import { FakeGameAdapter } from "./fake-game.adapter";
 describe('RefreshGameService', () => {
     let refreshGameService: RefreshGameService;
     let fakeGameAdapter: FakeGameAdapter;
-    let fakeTimerWrapper: FakeTimerWrapper;
+    let fakeTimerAdapter: FakeTimerAdapter;
     let gameView: GameView;
-    let fakeUiWrapper: FakeUiWrapper;
+    let fakeUiAdapter: FakeUiAdapter;
 
     beforeEach(() => {
-        fakeUiWrapper = new FakeUiWrapper();
-        gameView = new GameView(new FakeSignalWrapper<GameViewModel>(), fakeUiWrapper);
+        fakeUiAdapter = new FakeUiAdapter();
+        gameView = new GameView(new FakeSignalAdapter<GameViewModel>(), fakeUiAdapter);
         fakeGameAdapter = new FakeGameAdapter();
-        fakeTimerWrapper = new FakeTimerWrapper();
-        refreshGameService = new RefreshGameService(gameView, fakeGameAdapter, fakeTimerWrapper);
+        fakeTimerAdapter = new FakeTimerAdapter();
+        refreshGameService = new RefreshGameService(gameView, fakeGameAdapter, fakeTimerAdapter);
     });
 
     it('should fetch the right game for the right player', () => {
         const gameId = 'gameId';
         const playerId = 'playerId';
-        fakeUiWrapper.params[AppParam.GameId] = gameId;
-        fakeUiWrapper.params[AppParam.PlayerId] = playerId;
+        fakeUiAdapter.params[AppParam.GameId] = gameId;
+        fakeUiAdapter.params[AppParam.PlayerId] = playerId;
 
         expect(fakeGameAdapter.fetchedGameId).toBeUndefined();
         expect(fakeGameAdapter.fetchedPlayerId).toBeUndefined();
@@ -199,17 +199,17 @@ describe('RefreshGameService', () => {
     it('should schedule a refetch after 5000ms when status is WaitingOpponent', async () => {
         simulateFirstPlayerRound();
 
-        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
-        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
         expect(fakeGameAdapter.fetchCallCount).toEqual(0);
 
         await refreshGameService.execute();
 
-        expect(fakeTimerWrapper.scheduledMs).toBe(5000);
-        expect(fakeTimerWrapper.scheduledCallback).not.toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBe(5000);
+        expect(fakeTimerAdapter.scheduledCallback).not.toBeUndefined();
         expect(fakeGameAdapter.fetchCallCount).toEqual(1);
 
-        await fakeTimerWrapper.trigger();
+        await fakeTimerAdapter.trigger();
 
         expect(fakeGameAdapter.fetchCallCount).toEqual(2);
     });
@@ -218,23 +218,23 @@ describe('RefreshGameService', () => {
         simulatePlayerWinGame();
         simulateOpponentLoseGame();
 
-        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
-        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
 
         await refreshGameService.execute();
 
-        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
-        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
     });
 
     it('should not schedule refetch when player have next action', async () => {
-        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
-        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
 
         await refreshGameService.execute();
 
-        expect(fakeTimerWrapper.scheduledMs).toBeUndefined();
-        expect(fakeTimerWrapper.scheduledCallback).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledMs).toBeUndefined();
+        expect(fakeTimerAdapter.scheduledCallback).toBeUndefined();
     });
 
     function simulateFirstPlayerRound() {

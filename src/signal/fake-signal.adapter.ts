@@ -1,6 +1,6 @@
 import { SignalPort } from "./signal.port";
 
-export class FakeSignalWrapper<T> implements SignalPort<T> {
+export class FakeSignalAdapter<T> implements SignalPort<T> {
     private signal = undefined as T;
 
     get(): T {

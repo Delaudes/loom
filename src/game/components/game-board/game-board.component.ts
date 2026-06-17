@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
-import { AngularSignalWrapper } from '../../../signal/angular-signal.wrapper';
+import { AngularSignalAdapter } from '../../../signal/angular-signal.adapter';
 import { SignalPort } from '../../../signal/signal.port';
 import { GameView } from '../../core/game.view';
 import { CellComponent } from "../cell/cell.component";
@@ -17,11 +17,11 @@ const DURATION = 200;
 export class GameBoardComponent {
   protected readonly gameView = inject(GameView);
 
-  private readonly rowOffset: SignalPort<number> = new AngularSignalWrapper();
-  private readonly colOffset: SignalPort<number> = new AngularSignalWrapper();
-  protected readonly tx: SignalPort<number> = new AngularSignalWrapper();
-  protected readonly ty: SignalPort<number> = new AngularSignalWrapper();
-  protected readonly animated: SignalPort<boolean> = new AngularSignalWrapper();
+  private readonly rowOffset: SignalPort<number> = new AngularSignalAdapter();
+  private readonly colOffset: SignalPort<number> = new AngularSignalAdapter();
+  protected readonly tx: SignalPort<number> = new AngularSignalAdapter();
+  protected readonly ty: SignalPort<number> = new AngularSignalAdapter();
+  protected readonly animated: SignalPort<boolean> = new AngularSignalAdapter();
 
   constructor() {
     this.rowOffset.set(0);

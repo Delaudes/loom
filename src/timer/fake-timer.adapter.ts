@@ -1,6 +1,6 @@
 import { TimerPort } from "./timer.port";
 
-export class FakeTimerWrapper implements TimerPort {
+export class FakeTimerAdapter implements TimerPort {
     scheduledCallback?: (() => void);
     scheduledMs?: number;
 
