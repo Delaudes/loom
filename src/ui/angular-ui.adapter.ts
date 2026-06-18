@@ -17,7 +17,7 @@ export class AngularUiAdapter implements UiPort {
     share(text: string, path: string): void {
         navigator.share({
             text,
-            url: location.origin + '/' + path,
+            url: new URL(path, document.baseURI).href,
         });
     }
 }
