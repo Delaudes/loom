@@ -27,7 +27,8 @@ export class GameView {
             ),
             round: '1/10',
             playerTerritorySize: 0,
-            opponentTerritorySize: 0
+            opponentTerritorySize: 0,
+            history: []
         });
     }
 

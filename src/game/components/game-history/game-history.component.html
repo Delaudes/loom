@@ -1,0 +1,42 @@
+@if (rounds().length > 0) {
+  <div class="w-full flex flex-col gap-2">
+
+    <p class="text-[0.55rem] tracking-[0.25em] text-zinc-400 uppercase">Historique</p>
+
+    <div class="h-36 sm:h-auto overflow-y-auto flex flex-col border border-zinc-800">
+      @for (round of rounds(); track round.round) {
+
+        <div class="flex flex-col gap-1.5 p-3" [class.border-b]="!$last" [class.border-zinc-800]="!$last">
+
+          <p class="text-[0.55rem] tracking-[0.2em] text-zinc-300 uppercase">Tour {{ round.round }}</p>
+
+          <div class="flex flex-col gap-0.5">
+            @for (entry of round.conflicts; track $index) {
+              <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ entry }}</p>
+            }
+            @for (entry of round.playerSteals; track $index) {
+              <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ entry }}</p>
+            }
+            @for (entry of round.opponentSteals; track $index) {
+              <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ entry }}</p>
+            }
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.playerGains }}</p>
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.opponentGains }}</p>
+          </div>
+
+          <div class="w-full h-px bg-zinc-900"></div>
+
+          <div class="flex flex-col gap-0.5">
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.playerPlacements }}</p>
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.opponentPlacements }}</p>
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.playerPredictions }}</p>
+            <p class="text-[0.6rem] tracking-[0.04em] text-zinc-300">{{ round.opponentPredictions }}</p>
+          </div>
+
+        </div>
+
+      }
+    </div>
+
+  </div>
+}

@@ -11,6 +11,20 @@ export type GameViewModel = {
     round: string;
     playerTerritorySize: number;
     opponentTerritorySize: number;
+    history: RoundHistoryViewModel[];
+}
+
+export type RoundHistoryViewModel = {
+    round: number;
+    playerPlacements: string;
+    opponentPlacements: string;
+    playerPredictions: string;
+    opponentPredictions: string;
+    conflicts: string[];
+    playerSteals: string[];
+    opponentSteals: string[];
+    playerGains: string;
+    opponentGains: string;
 }
 
 export type CellViewModel = {

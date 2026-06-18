@@ -148,6 +148,7 @@ export class GameDomainModel {
     public readonly isWaitingForOpponent: boolean;
     public readonly isPlayerWin: boolean;
     public readonly isOpponentWin: boolean;
+    public readonly roundResolutions: RoundResolutionDomainModel[];
 
     constructor(
         public readonly playerActions: ActionDomainModel[],
@@ -161,6 +162,7 @@ export class GameDomainModel {
         this.isWaitingForOpponent = !this.isFinished && this.nextPlayerAction === undefined;
         this.isPlayerWin = this.ownedPositions.isPlayerWin;
         this.isOpponentWin = this.ownedPositions.isOpponentWin;
+        this.roundResolutions = this.computeRoundResolutions();
     }
 
     private actionsInRound(actions: ActionDomainModel[], round: number): ActionDomainModel[] {
@@ -235,6 +237,59 @@ export class GameDomainModel {
         return undefined;
     }
 
+    private computeRoundResolutions(): RoundResolutionDomainModel[] {
+        const resolutions: RoundResolutionDomainModel[] = [];
+        const actionsPerRound = 5;
+        for (let round = 1; round <= this.maxRound; round++) {
+            const playerRound = this.actionsInRound(this.playerActions, round);
+            const opponentRound = this.actionsInRound(this.opponentActions, round);
+            if (playerRound.length < actionsPerRound || opponentRound.length < actionsPerRound) break;
+
+            const playerPlacements = playerRound.filter(a => a.isPlacement);
+            const playerPredictions = playerRound.filter(a => a.isPrediction);
+            const opponentPlacements = opponentRound.filter(a => a.isPlacement);
+            const opponentPredictions = opponentRound.filter(a => a.isPrediction);
+
+            const conflicts: PositionDomainModel[] = [];
+            const playerSteals: PositionDomainModel[] = [];
+            const opponentSteals: PositionDomainModel[] = [];
+            const playerGains: PositionDomainModel[] = [];
+            const opponentGains: PositionDomainModel[] = [];
+
+            playerPlacements.forEach(a => {
+                if (opponentPredictions.some(p => p.isAt(a.position.x, a.position.y))) {
+                    opponentSteals.push(a.position);
+                } else if (opponentPlacements.some(p => p.isAt(a.position.x, a.position.y))) {
+                    conflicts.push(a.position);
+                } else {
+                    playerGains.push(a.position);
+                }
+            });
+
+            opponentPlacements.forEach(a => {
+                if (playerPredictions.some(p => p.isAt(a.position.x, a.position.y))) {
+                    playerSteals.push(a.position);
+                } else if (!playerPlacements.some(p => p.isAt(a.position.x, a.position.y))) {
+                    opponentGains.push(a.position);
+                }
+            });
+
+            resolutions.push(new RoundResolutionDomainModel(
+                round,
+                playerPlacements.map(a => a.position),
+                opponentPlacements.map(a => a.position),
+                playerPredictions.map(a => a.position),
+                opponentPredictions.map(a => a.position),
+                conflicts,
+                playerSteals,
+                opponentSteals,
+                playerGains,
+                opponentGains,
+            ));
+        }
+        return resolutions;
+    }
+
     hasPlayedInCurrentRound(x: number, y: number): boolean {
         return this.currentRoundPlayerActions.some(a => a.isAt(x, y));
     }
@@ -243,6 +298,21 @@ export class GameDomainModel {
         if (!this.nextPlayerAction) return false;
         return this.ownedPositions.isUnowned(x, y) && !this.hasPlayedInCurrentRound(x, y);
     }
+}
+
+export class RoundResolutionDomainModel {
+    constructor(
+        public readonly round: number,
+        public readonly playerPlacements: PositionDomainModel[],
+        public readonly opponentPlacements: PositionDomainModel[],
+        public readonly playerPredictions: PositionDomainModel[],
+        public readonly opponentPredictions: PositionDomainModel[],
+        public readonly conflicts: PositionDomainModel[],
+        public readonly playerSteals: PositionDomainModel[],
+        public readonly opponentSteals: PositionDomainModel[],
+        public readonly playerGains: PositionDomainModel[],
+        public readonly opponentGains: PositionDomainModel[],
+    ) {}
 }
 
 export class NewGameDomainModel {

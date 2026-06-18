@@ -5,7 +5,7 @@ import { FakeUiAdapter } from "../../ui/fake-ui.adapter";
 import { GameView } from "../core/game.view";
 import { RefreshGameService } from "../core/refresh-game.service";
 import { ActionDomainModel, ActionTypeDomainEnum, PositionDomainModel } from "../models/game.domain.model";
-import { CurrentRoundActionViewEnum, GameViewModel, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
+import { CurrentRoundActionViewEnum, GameViewModel, OwnerViewEnum, RoundHistoryViewModel, StatusViewEnum } from "../models/game.view.model";
 import { FakeGameAdapter } from "./fake-game.adapter";
 
 describe('RefreshGameService', () => {
@@ -276,6 +276,18 @@ describe('RefreshGameService', () => {
         expectedGame.opponentTerritorySize = 1;
         expectedGame.cells[0][1].isInPlayerLargestTerritory = true;
         expectedGame.cells[0][2].isInOpponentLargestTerritory = true;
+        expectedGame.history = [{
+            round: 1,
+            playerPlacements: 'Vous avez posé en A1, B1 et C1',
+            opponentPlacements: "L'adversaire a posé en A1, A2 et A3",
+            playerPredictions: 'Vous avez prédit A3 et A4',
+            opponentPredictions: "L'adversaire a prédit D1 et C1",
+            conflicts: ['Conflit en A1 — personne ne remporte la case'],
+            playerSteals: ['Vous avez prédit A3 — vous volez la case'],
+            opponentSteals: ["L'adversaire a prédit C1 — il vous vole la case"],
+            playerGains: 'Vous remportez B1',
+            opponentGains: "L'adversaire remporte A2",
+        }];
     }
 
     function simulatePlayerWinGame() {
@@ -333,6 +345,21 @@ describe('RefreshGameService', () => {
         expectedGame.cells[7][0].isInPlayerLargestTerritory = true;
         expectedGame.cells[1][0].isInOpponentLargestTerritory = true;
         expectedGame.cells[2][0].isInOpponentLargestTerritory = true;
+        expectedGame.history = [
+            ...Array.from({ length: 9 }, (_, i) => conflictRound(10 - i)),
+            {
+                round: 1,
+                playerPlacements: 'Vous avez posé en A1, H1 et A8',
+                opponentPlacements: "L'adversaire a posé en H8, A2 et A3",
+                playerPredictions: 'Vous avez prédit B2 et C3',
+                opponentPredictions: "L'adversaire a prédit B2 et C3",
+                conflicts: [],
+                playerSteals: [],
+                opponentSteals: [],
+                playerGains: 'Vous remportez A1, H1 et A8',
+                opponentGains: "L'adversaire remporte H8, A2 et A3",
+            },
+        ];
     }
 
     function simulatePlayerLoseGame() {
@@ -390,6 +417,21 @@ describe('RefreshGameService', () => {
         expectedGame.cells[0][0].isInOpponentLargestTerritory = true;
         expectedGame.cells[0][7].isInOpponentLargestTerritory = true;
         expectedGame.cells[7][0].isInOpponentLargestTerritory = true;
+        expectedGame.history = [
+            ...Array.from({ length: 9 }, (_, i) => conflictRound(10 - i)),
+            {
+                round: 1,
+                playerPlacements: 'Vous avez posé en H8, A2 et A3',
+                opponentPlacements: "L'adversaire a posé en A1, H1 et A8",
+                playerPredictions: 'Vous avez prédit B2 et C3',
+                opponentPredictions: "L'adversaire a prédit B2 et C3",
+                conflicts: [],
+                playerSteals: [],
+                opponentSteals: [],
+                playerGains: 'Vous remportez H8, A2 et A3',
+                opponentGains: "L'adversaire remporte A1, H1 et A8",
+            },
+        ];
     }
 
     function simulateNoWinnerGame() {
@@ -445,6 +487,40 @@ describe('RefreshGameService', () => {
         expectedGame.cells[0][0].isInOpponentLargestTerritory = true;
         expectedGame.cells[0][7].isInOpponentLargestTerritory = true;
         expectedGame.cells[7][0].isInOpponentLargestTerritory = true;
+        expectedGame.history = [
+            ...Array.from({ length: 9 }, (_, i) => conflictRound(10 - i)),
+            {
+                round: 1,
+                playerPlacements: 'Vous avez posé en H8, H7 et G8',
+                opponentPlacements: "L'adversaire a posé en A1, H1 et A8",
+                playerPredictions: 'Vous avez prédit B2 et C3',
+                opponentPredictions: "L'adversaire a prédit B2 et C3",
+                conflicts: [],
+                playerSteals: [],
+                opponentSteals: [],
+                playerGains: 'Vous remportez H8, H7 et G8',
+                opponentGains: "L'adversaire remporte A1, H1 et A8",
+            },
+        ];
+    }
+
+    function conflictRound(round: number): RoundHistoryViewModel {
+        return {
+            round,
+            playerPlacements: 'Vous avez posé en B1, C1 et D1',
+            opponentPlacements: "L'adversaire a posé en B1, C1 et D1",
+            playerPredictions: 'Vous avez prédit B2 et C3',
+            opponentPredictions: "L'adversaire a prédit B2 et C3",
+            conflicts: [
+                'Conflit en B1 — personne ne remporte la case',
+                'Conflit en C1 — personne ne remporte la case',
+                'Conflit en D1 — personne ne remporte la case',
+            ],
+            playerSteals: [],
+            opponentSteals: [],
+            playerGains: 'Vous ne remportez aucune case',
+            opponentGains: "L'adversaire ne remporte aucune case",
+        };
     }
 
     function gameViewModelInit(): GameViewModel {
@@ -470,6 +546,7 @@ describe('RefreshGameService', () => {
             round: '1/10',
             playerTerritorySize: 0,
             opponentTerritorySize: 0,
+            history: [],
         };
     }
 });

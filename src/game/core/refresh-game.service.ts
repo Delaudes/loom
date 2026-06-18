@@ -1,6 +1,6 @@
 import { TimerPort } from "../../timer/timer.port";
-import { BOARD_SIZE, GameDomainModel, OwnedPositionsDomainModel, OwnerDomainEnum } from "../models/game.domain.model";
-import { CurrentRoundActionViewEnum, OwnerViewEnum, StatusViewEnum } from "../models/game.view.model";
+import { BOARD_SIZE, GameDomainModel, OwnedPositionsDomainModel, OwnerDomainEnum, PositionDomainModel } from "../models/game.domain.model";
+import { CurrentRoundActionViewEnum, OwnerViewEnum, RoundHistoryViewModel, StatusViewEnum } from "../models/game.view.model";
 import { GamePort } from "./game.port";
 import { GameView } from "./game.view";
 import { RefreshGamePort } from "./refresh-game.port";
@@ -44,6 +44,7 @@ export class RefreshGameService implements RefreshGamePort {
             round: `${game.round}/${game.maxRound}`,
             playerTerritorySize: ownedPositions.playerTerritorySize,
             opponentTerritorySize: ownedPositions.opponentTerritorySize,
+            history: this.computeRoundHistory(game),
         });
     }
 
@@ -72,6 +73,31 @@ export class RefreshGameService implements RefreshGamePort {
             CurrentRoundActionViewEnum.Predict2,
         ];
         return map[index] ?? CurrentRoundActionViewEnum.None;
+    }
+
+    private computeRoundHistory(game: GameDomainModel): RoundHistoryViewModel[] {
+        return game.roundResolutions.map(r => ({
+            round: r.round,
+            playerPlacements: `Vous avez posé en ${this.joinLabels(r.playerPlacements)}`,
+            opponentPlacements: `L'adversaire a posé en ${this.joinLabels(r.opponentPlacements)}`,
+            playerPredictions: `Vous avez prédit ${this.joinLabels(r.playerPredictions)}`,
+            opponentPredictions: `L'adversaire a prédit ${this.joinLabels(r.opponentPredictions)}`,
+            conflicts: r.conflicts.map(p => `Conflit en ${this.toPositionLabel(p)} — personne ne remporte la case`),
+            playerSteals: r.playerSteals.map(p => `Vous avez prédit ${this.toPositionLabel(p)} — vous volez la case`),
+            opponentSteals: r.opponentSteals.map(p => `L'adversaire a prédit ${this.toPositionLabel(p)} — il vous vole la case`),
+            playerGains: r.playerGains.length > 0 ? `Vous remportez ${this.joinLabels(r.playerGains)}` : `Vous ne remportez aucune case`,
+            opponentGains: r.opponentGains.length > 0 ? `L'adversaire remporte ${this.joinLabels(r.opponentGains)}` : `L'adversaire ne remporte aucune case`,
+        })).reverse();
+    }
+
+    private joinLabels(positions: PositionDomainModel[]): string {
+        const labels = positions.map(p => this.toPositionLabel(p));
+        if (labels.length === 1) return labels[0];
+        return labels.slice(0, -1).join(', ') + ' et ' + labels[labels.length - 1];
+    }
+
+    private toPositionLabel(position: PositionDomainModel): string {
+        return String.fromCharCode(65 + position.y) + (position.x + 1);
     }
 
     private getOwner(x: number, y: number, ownedPositions: OwnedPositionsDomainModel): OwnerViewEnum {
