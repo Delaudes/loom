@@ -10,10 +10,10 @@
 >
   @switch (cell().owner) {
     @case (OwnerViewEnum.Player) {
-      <img src="/player-token.svg" class="w-6 h-6" />
+      <img src="player-token.svg" class="w-6 h-6" />
     }
     @case (OwnerViewEnum.Opponent) {
-      <img src="/opponent-token.svg" class="w-6 h-6" />
+      <img src="opponent-token.svg" class="w-6 h-6" />
     }
     @default {
       @switch (cell().currentRoundAction) {
