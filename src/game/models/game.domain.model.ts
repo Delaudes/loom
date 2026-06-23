@@ -312,7 +312,7 @@ export class RoundResolutionDomainModel {
         public readonly opponentSteals: PositionDomainModel[],
         public readonly playerGains: PositionDomainModel[],
         public readonly opponentGains: PositionDomainModel[],
-    ) {}
+    ) { }
 }
 
 export class NewGameDomainModel {

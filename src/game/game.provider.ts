@@ -1,4 +1,6 @@
-import { InjectionToken } from "@angular/core";
+import { inject, InjectionToken } from "@angular/core";
+import { environment } from "../environments/environment";
+import { HTTP_TOKEN } from "../http/http.provider";
 import { AngularSignalAdapter } from "../signal/angular-signal.adapter";
 import { TIMER_TOKEN } from "../timer/timer.provider";
 import { UiPort } from "../ui/ui.port";
@@ -10,12 +12,13 @@ import { JoinGameUseCase } from "./core/join-game.use-case";
 import { PlayCellUseCase } from "./core/play-cell.use-case";
 import { RefreshGameService } from "./core/refresh-game.service";
 import { StartGameUseCase } from "./core/start-game.use-case";
+import { HttpGameAdapter } from "./http-game.adapter";
 import { LocalStorageGameAdapter } from "./local-storage-game.adapter";
 import { GameViewModel } from "./models/game.view.model";
 
 export const GAME_TOKEN = new InjectionToken<GamePort>('GAME_TOKEN', {
     providedIn: 'root',
-    factory: () => new LocalStorageGameAdapter()
+    factory: () => environment.useLocalStorageGameAdapter ? new LocalStorageGameAdapter() : new HttpGameAdapter(inject(HTTP_TOKEN))
 });
 
 
